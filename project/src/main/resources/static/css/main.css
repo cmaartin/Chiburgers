@@ -1,0 +1,511 @@
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+}
+
+body {
+	background-color: e4e4e4;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+	margin: 0;
+}
+
+h1 {
+	font-size: 20px;
+}
+
+h2 {
+	margin-top: 16px;
+	margin-bottom: 32px;
+	font-size: 20px;
+	color: #00000099;
+}
+
+h3 {
+	font-size: 16px;
+	color: #000000de;
+}
+
+p {
+	font-size: 14px;
+	color: #00000099;
+}
+
+p.hint {
+	font-style: italic;
+}
+
+/* Material icon rules */
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
+
+/* Sign in button */
+.g-signin2 {
+	float: right;
+	margin: 10px 16px 10px 0;
+}
+
+header {
+	background-color: #262626;
+	width: 100%;
+	height: 56px;
+}
+
+header > a {
+	display: inline-block;
+	text-decoration: none;
+	height: 32px;
+	background: url(/img/rebu-icon.svg);
+	margin: 12px 16px;
+	background-repeat: no-repeat;
+}
+
+header h1 {
+	font-weight: normal;
+	line-height: 32px;
+	color: white;
+	padding-left: 56px;
+}
+
+#header-links {
+	display: flex;
+	align-items: center;
+	float: right;
+	padding: 10px 0;
+	margin: 0 16px;
+	box-sizing: border-box;
+	height: 100%;
+}
+
+#header-links > a {
+	display: inline-block;
+	background: none;
+	color: #ffffff;
+	font-weight: normal;
+	padding: 10px;
+	border-radius: 4px;
+	text-decoration: none;
+	font-size: 10pt;
+	line-height: 10pt;
+	cursor: pointer;
+}
+
+#header-links > a:hover, #header-links > a:focus {
+	background: #ffffff11;
+}
+
+/* Login hint */
+
+#login-hint {
+	position: absolute;
+	top: 56px;
+	left: 0;
+	width: 100%;
+	height: calc(100% - 56px);
+	background-color: #00000099;
+	z-index: 1;
+}
+
+#login-hint.hidden {
+	display: none;
+}
+
+#login-hint div {
+	position: absolute;
+	right: 16px;
+	top: 10px;
+	z-index: 1;
+	width: 200px;
+	background-color: #f44336;
+	padding: 16px;
+	border-radius: 4px;
+	box-shadow: 0 1px 10px -2px black;
+	cursor: default;
+	user-select: none;
+}
+
+#login-hint div p {
+	font-weight: bold;
+	text-align: center;
+}
+
+#login-hint div:after {
+	content: '';
+	position: absolute;
+	top: 0;
+	right: 16%;
+	width: 0;
+	height: 0;
+	border: 16px solid #fff2af00;
+	border-bottom-color: #f44336;
+	border-top: 0;
+	margin-left: -16px;
+	margin-top: -16px;
+}
+
+#content-wrapper {
+	max-width: 800px;
+	margin: 16px auto;
+	padding: 16px;
+	background-color: #ffffff;
+	box-shadow: 0 0 10px -5px black;
+	border-radius: 4px;
+}
+
+#geo-button {
+	position: absolute;
+	right: 16px;
+	bottom: 16px;
+	background-color: #42a5f4;
+	color: #ffffff;
+}
+
+#geo-button .material-icons {
+	vertical-align: text-bottom;
+	margin-right: 8px;
+	margin-left: -4px;
+}
+
+#map-wrapper {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	margin-top: 56px;
+	transition: left 0.4s;
+}
+
+#map {
+	height: 100%;
+}
+
+#map .info-window {
+	width: 100%;
+}
+
+#map button.confirm {
+	width: 100%;
+}
+
+.map-info {
+	width: 200px;
+}
+
+#sidepane, #sidepane-content {
+	width: 360px;
+	display: block;
+}
+
+#sidepane {
+    position: fixed;
+    height: calc(100% - 56px);
+    background-color: #fefefe;
+    box-shadow: 0 0 10px -5px black;
+    overflow: hidden scroll;
+    transition: width 0.4s;
+}
+
+/* scrollbar styling for webkit browsers */
+#sidepane::-webkit-scrollbar {
+	width: 16px;
+}
+
+#sidepane::-webkit-scrollbar-thumb {
+  background-color: #00000033;
+  border: 6px solid white;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+
+#sidepane-content {
+	padding: 16px;
+	box-sizing: border-box;
+}
+
+#sidepane-content button.confirm {
+	float: right;
+	margin-bottom: 32px;
+}
+
+#sidepane-content > .vehicle-info {
+	margin-bottom: 24px;
+}
+
+#sidepane-content .nearby-info {
+	padding-bottom: 24px;
+	margin-top: 24px;
+	border-bottom: 1px solid #00000033;
+}
+
+#sidepane-content .nearby-info:last-child {
+	border-bottom: none;
+}
+
+/* used for the back button*/
+#sidepane h2 i.material-icons {
+	cursor: pointer;
+	vertical-align: text-bottom;
+	margin-right: 16px;
+}
+
+.nearby-info {
+	display: flex;
+	justify-content: space-between;
+}
+
+.nearby-info .book-container {
+	text-align: center;
+}
+
+.nearby-info .book-container p {
+	margin-bottom: 8px;
+}
+
+.nearby-info .book-container button {
+	background-color: #42a5f4;
+	color: #ffffff;
+}
+
+form legend {
+	display: block;
+	color: #00000099;
+	font-size: 16px;
+	margin-bottom: 10px;
+}
+
+form fieldset {
+	margin: 0 0 24px 0;
+	padding: 0;
+	border: none;
+}
+
+form select,
+form input {
+	display: block;
+	width: 100%;
+	height: 46px;
+	font-size: 16px;
+	color: #000000de;
+	background-color: #00000026;
+	padding: 0 10px;
+	margin-bottom: 8px;
+	border: none;
+	border-radius: 4px;
+}
+
+button {
+	height: 36px;
+	font-size: 14px;
+	line-height: 14px;
+	color: #000000de;
+	background-color: #00000026;
+	border: none;
+	border-radius: 4px;
+	font-weight: bold;
+	padding: 0 16px;
+}
+
+button.exit {
+	position: absolute;
+	right: 0;
+	top: 32px;
+	width: 24px;
+	height: 24px;
+	background: none;
+	padding: 0;
+	outline: none;
+	border-radius: 12px;
+	color: #00000099;
+}
+
+button.exit:hover,
+button.exit:focus,
+button.exit:active {
+	background-color: #00000099;
+	color: #ffffff;
+}
+
+button.confirm {
+	background-color: #42a5f4;
+	color: #ffffff;
+	margin-top: 10px;
+}
+
+button.confirm:disabled {
+	background-color: #ababab;
+}
+
+#prev-bookings > div {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0 -16px;
+	padding: 8px 16px;
+	transition: background-color 0.2s ease;
+}
+
+#prev-bookings > div:nth-child(even) {
+	background-color: #00000008;
+}
+
+#prev-bookings .vehicle-info {
+	flex-grow: 1;
+}
+
+#prev-bookings .cost {
+	font-weight: bolder;
+	color: #000000de;
+	margin-left: 32px;
+}
+
+#current-booking {
+	position: fixed;
+	bottom: 16px;
+	left: 16px;
+	width: 370px;
+	background-color: #fefefe;
+	border-radius: 4px;
+	box-shadow: 0 2px 10px -2px black;
+	padding: 16px;
+	transition: transform 0.2s ease-out;
+}
+
+#current-booking.transition-start {
+	transform: translate(-110%);
+}
+
+#current-booking > h3 {
+	color: #00000099;
+	font-size: 16px;
+	margin-bottom: 16px;
+}
+
+#current-booking > div {
+	display: flex;
+	justify-content: space-between;
+}
+
+#current-booking .vehicle-info h3,
+#current-booking .booking-info h3 {
+	color: #000000de;
+}
+
+#current-booking .vehicle-info p,
+#current-booking .booking-info p {
+	color: #00000099;
+}
+
+#current-booking .booking-info {
+	text-align: right;
+}
+
+#sidepane ul.menu {
+	list-style: none;
+	margin: 16px -16px;
+	padding: 0;
+}
+
+#sidepane ul.menu button {
+	width: 100%;
+	border-radius: 0;
+	text-align: left;
+	background-color: #00000000;
+	cursor: pointer;
+}
+
+#sidepane ul.menu button:hover,
+#sidepane ul.menu button:focus {
+	background-color: #00000026;
+	outline: none;
+}
+
+form.searchbox {
+	display: flex;
+}
+
+form.searchbox input {
+	border-radius: 4px 0 0 4px;
+	outline: none;
+}
+
+form.searchbox button {
+	height: 46px;
+	border-radius: 0 4px 4px 0;
+}
+
+form.searchbox button:hover,
+form.searchbox button:focus {
+	outline: none;
+	background-color: #0000003d;
+}
+
+/* account page current booking */
+
+#cur-booking > div {
+	border: 1px solid rgba(0, 0, 0, 0.6);
+	border-radius: 4px;
+	padding: 16px;
+	position: relative;
+	margin-bottom: 8px;
+}
+
+#cur-booking > div:before {
+	content: "ACTIVE BOOKING";
+	position: absolute;
+	top: -8px;
+	left: 8px;
+	background-color: #fff;
+	padding: 0 8px;
+	font-weight: bold;
+	font-size: 14px;
+	color: #00000099;
+}
+
+#cur-booking > div > div {
+	display: flex;
+	justify-content: space-between;
+}
+
+#cur-booking .booking-info {
+	text-align: right;
+}
+
+@media only screen and (max-width: 432px) {
+	
+	#current-booking {
+		bottom: 0;
+		left: 0;
+		border-radius: 0;
+		width: 100%;
+		box-sizing: border-box;
+	}
+	
+}
+
+/* admin rate editing form */
+
+div.ratesTable {
+	margin-top: 32px;
+}
+
+div.ratesTable > div {
+	display: flex;
+	align-items: center;
+	margin-bottom: 16px;
+}
+
+div.ratesTable > div > label {
+	flex-shrink: 0;
+	margin-right: 16px;
+	font-weight: bold;
+}
+
+div.ratesTable > div > input {
+	margin: 0;
+}

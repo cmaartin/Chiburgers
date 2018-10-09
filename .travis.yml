@@ -1,0 +1,30 @@
+language: java
+before_install:
+- sudo apt-get install -y dpkg # fix for travis issue https://github.com/travis-ci/travis-ci/issues/9361
+- openssl aes-256-cbc -K $encrypted_45bbf244f1aa_key -iv $encrypted_45bbf244f1aa_iv
+  -in secrets.tar.enc -out secrets.tar -d
+- tar xvf secrets.tar
+- ls -la
+- cp config.properties project/src/main/resources/config.properties
+# install the cloud SDK
+- export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
+- echo "deb https://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+- curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+- sudo apt-get update && sudo apt-get install -y kubectl google-cloud-sdk google-cloud-sdk-app-engine-java
+- cd project
+before_script:
+- gcloud auth activate-service-account "travis-ci@s3543819-capstone-rmit.iam.gserviceaccount.com" --key-file=../service-account.json
+- gcloud config set project $PROJECT
+script:
+- mvn appengine:deploy -Dappengine.additionalParams="--service_account_json_key_file=../service-account.json"
+env:
+  global:
+  - secure: Fba3FKYhNSM4/UBsRLoTrEisytqJZJCehXEnKOEz6F0svD0bADgP0cmOmKlnsuKgStHYV/3nd4Q4um6X1BFWM4acpqthrDEtXdh8lOxLhXJN3izAhz9jiVYKApMBGeFv93XFRnPuDDPohS3wh5xPFLECHA1BwUORNr3l+mrpjGx0PzKk19svMTYljWf2FY6JW99O2/tBNadLmFBFMC+aoDiENFW26reLcYEiS3l3I/kvruBeJhx30GH9EaqDMUAf7YGDHwIC7TU/eVVg8sTSTRx4Y1dOwiEdm7/iTdrspfbqCgBL9kY+nqdEElYiBm6G2phRaDZ0VFq1kPb+qWqP2qq13o+2P0YyJyx/47SufRzvjqCpf3xPJgpecxMBOUo7cX8/M8PJppLecNpdsLudwe0WA8ri86YkIpBKXQ3qlJqD6Eu49HFE5CUDqxAUI6MA6wwj05ikGFbX9/sw5sO4QsFyT6hYQcLMBg/bV4cTNGX8xcke4TpdldeE7mWEaLtqBnL9AsZuOMgciGINXVvxhOm2Cv4BcToGWyoBVeXA+2uzpMeNEnGzDiDADac1cyGcDs40qa69/iboYSVpZ0kTwkmOFooV1qP3/+pyhZvdQCWqxaaB36Y2U8s3Du75JMOd4tgtCcqcBswJNxVudR6QZeJLNZ+0iMC7XVePRxEPyy0=
+branches:
+  only:
+  - master
+  - dev
+notifications:
+  email: false
+  slack:
+    secure: lCiOx5lIyy0L6P+Xwli4mnDHIF+wB5G2/TCt8j+8ydBINB66gBlWOd02E8hJHdtx25mmOKA2DQkgmRphWymwpjD+skRsvswnLAmnm9INy6v6URpNfmu6ATChhHxbb+PaB3TUQWZB0aU9nFIsC/y4RjXwTP08825hbHgB5fCChuLLF/axhjEz6u00KkBYAGv8YptAX6InM5NX3LTu+0mvjPOcI+OsERL8gJsHwQUCKZaVoTWJc40zgow5FoV2IsjjO70qcGwS9EJ9XHP8fFV09wUXe3rH5uZK0UdmU3cXAJqg3qH7x6T8RpVt90WyB93Jr3E+3DSDuq/ULwpRP1dFcfE7QLb1UieOL3yvGhi5M8q7A4KNp5NT1KShGbItlyD1EebhPObdF3MpvxQoef311YAc07SaHPbkmciyfjjoKz+EIDKWZYabSws8tq3BO4i6aLObkJq62iFTfTr1z8i1Axo0ILj0SM3xIX27wzP81fLJaQx4iNA4FCbEy9xjXEDP9fdnd0zGuZMuyOoHjD0/aXUELxKIWCyEe6g79W/UDAtnFbAw23ltr4WYiqogAbPcFj1hP3gi/aVBbYQzWw0XB2ckdBb78v6ARMnfIoLN9I/oTCDwERiyqj7acDIuh9ZbkpD4nQovVRHO4rvLZUPWvVMciFECrPZwjZnlLu7S7Ag=

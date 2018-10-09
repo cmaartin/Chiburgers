@@ -1,0 +1,5 @@
+/target/
+config.properties
+
+# GAE Account details (eclipse plugin)
+.settings/com.google.cloud.tools.eclipse.appengine.deploy.prefs

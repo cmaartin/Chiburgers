@@ -1,0 +1,2 @@
+This file exists to force Git to sync this folder.
+Once there are other files in here, it may be removed.
