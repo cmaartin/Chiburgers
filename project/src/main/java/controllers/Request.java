@@ -34,6 +34,15 @@ class Request {
     }
 
     /**
+     * Parses Order creation requests from clients
+     */
+    static class OrderRequest {
+	String timestamp;
+	String store_id;
+	int duration;
+    }
+
+    /**
      * Adds a customerId field to {@link BookingRequest} for admin editing of
      * bookings
      */

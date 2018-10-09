@@ -145,7 +145,7 @@ var view = (function() {
 			registration.type = "hidden";
 			registration.value = vehicle.registration;
 			
-			dropoffLegend.innerText = "Drop off";
+			dropoffLegend.innerText = "Menu";
 			dropoffTime.id = "dropoff-time";
 			dropoffTime.name = "dropoff-time";
 			dropoffLocation.id = "dropoff-location";
@@ -154,12 +154,12 @@ var view = (function() {
 			
 			// add options to select
 			options = [
-				{value: 60, text: "1 Hour"},
-				{value: 120, text: "2 Hours"},
-				{value: 180, text: "3 Hours"},
-				{value: 360, text: "6 Hours"},
-				{value: 720, text: "12 Hours"},
-				{value: 1440, text: "24 Hours"},
+				{value: 60, text: "Burger 1"},
+				{value: 120, text: "Burger 2"},
+				{value: 180, text: "Burger 3"},
+				{value: 360, text: "Burger 4"},
+				{value: 720, text: "Burger 5"},
+				{value: 1440, text: "Burger 6"},
 			];
 			for (var i = 0; i < options.length; i++) {
 				option = document.createElement("option");
@@ -191,8 +191,8 @@ var view = (function() {
 			var header = document.createElement("h3");
 			var message = document.createElement("p");
 			
-			header.innerText = "Booking Confirmed!";
-			message.innerText = "Make sure that you leave your car at the drop-off spot before the end of your rental.";
+			header.innerText = "Order Confirmed!";
+			message.innerText = "Make sure that you pick up your burger at the chosen restaurant.";
 			
 			container.appendChild(header);
 			container.appendChild(message);
@@ -207,13 +207,10 @@ var view = (function() {
 			
 			bookBtn.className = "confirm";
 			// disable button if car unavailable
-			if (vehicle.status == 0) {
-				bookBtn.innerText = "BOOK NOW";
-				bookBtn.addEventListener("click", callback);
-			} else {
-				bookBtn.innerText = "NOT AVAILABLE";
-				bookBtn.disabled = true;
-			}
+			
+			bookBtn.innerText = "BOOK NOW";
+			bookBtn.addEventListener("click", callback);
+			
 			infoContents.className = "map-info";
 			infoContents.appendChild(vehicleInfo);
 			infoContents.appendChild(bookBtn);

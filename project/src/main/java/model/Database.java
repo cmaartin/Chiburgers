@@ -31,9 +31,9 @@ public class Database implements Closeable {
 
     /**
      * Create a database object with an underlying {@link java.sql.Connection}
-     * object. This constructor will return a connection to the local
-     * development database when run locally, or a connection to the Cloud SQL
-     * database when deployed.
+     * object. This constructor will return a connection to the local development
+     * database when run locally, or a connection to the Cloud SQL database when
+     * deployed.
      *
      * @throws SQLException
      */
@@ -92,6 +92,11 @@ public class Database implements Closeable {
 		+ "`store_name` VARCHAR(50) NOT NULL, " + "`manager` VARCHAR(50) NOT NULL, "
 		+ "`phone` VARCHAR(50) NOT NULL, " + "`location` POINT NOT NULL, " + "PRIMARY KEY (`store_id`))";
 
+	String ordersSql = "CREATE TABLE IF NOT EXISTS `orders` (" + "`id` INT NOT NULL AUTO_INCREMENT, "
+		+ "`timestamp` DATETIME NOT NULL, " + "`store_id` VARCHAR(10) NOT NULL, "
+		+ "`customer_id` VARCHAR(50) NOT NULL, " + "`duration` SMALLINT UNSIGNED NOT NULL, "
+		+ "PRIMARY KEY (`id`), " + "FOREIGN KEY (`store_id`) REFERENCES `restaurants`(`store_id`))";
+
 	String bookingsSql = "CREATE TABLE IF NOT EXISTS `bookings` (" + "`id` INT NOT NULL AUTO_INCREMENT, "
 		+ "`timestamp` DATETIME NOT NULL, " + "`registration` VARCHAR(10) NOT NULL, "
 		+ "`customer_id` VARCHAR(50) NOT NULL, " + "`duration` SMALLINT UNSIGNED NOT NULL, "
@@ -105,6 +110,7 @@ public class Database implements Closeable {
 
 	Statement stmt = this.conn.createStatement();
 	stmt.execute(restaurantsSql);
+	stmt.execute(ordersSql);
 	stmt.execute(bookingsSql);
 	stmt.execute(locationSql);
 	stmt.execute(users);
@@ -437,31 +443,84 @@ public class Database implements Closeable {
 	return null;
     }
 
-    // fix this
-    /*
-     * public Vehicle getVehicleByReg(String registration) {
-     * logger.info("Getting vehicle with rego: " + registration); Vehicle v =
-     * null; Position position; try { String query =
-     * "SELECT registration, make, model, year, colour, type, " +
-     * "status FROM vehicles WHERE registration LIKE ?"; PreparedStatement ps =
-     * this.conn.prepareStatement(query);
+    /**
+     * Creates a Order, writes it to the database & returns the booking object
      *
-     * ps.setString(1, registration);
-     *
-     * ResultSet rs = ps.executeQuery();
-     *
-     * if (rs.next()) { String rego = rs.getString("registration"); String make
-     * = rs.getString("make"); String model = rs.getString("model"); int year =
-     * rs.getInt("year"); String colour = rs.getString("colour"); int status =
-     * rs.getInt("status"); String type = rs.getString("type"); position =
-     * getRestaurantLocation(rego); // v = new Vehicle(rego, make, model, year,
-     * colour, position, // status, type);
-     *
-     * }
-     *
-     * } catch (SQLException e) { // TODO Auto-generated catch block
-     * e.printStackTrace(); } return null; }
+     * @throws SQLException
      */
+    public Order createOrder(LocalDateTime timestamp, String store_id, String customerId, int duration) {
+	logger.info("Create Orders for " + customerId);
+	try {
+
+	    String query = "INSERT INTO orders " + "(timestamp, store_id, customer_id, duration) VALUES "
+		    + "(?, ?, ?, ?)";
+
+	    PreparedStatement pStmnt = this.conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+
+	    pStmnt.setTimestamp(1, Timestamp.valueOf(timestamp));
+	    pStmnt.setString(2, store_id);
+	    pStmnt.setString(3, customerId);
+	    pStmnt.setInt(4, duration);
+
+	    pStmnt.executeUpdate();
+
+	    Position startLocation = getRestaurantLocation(store_id);
+	    // get the inserted booking's ID
+	    ResultSet rs = pStmnt.getGeneratedKeys();
+	    if (rs.next()) {
+		int id = rs.getInt(1);
+
+		pStmnt.close();
+
+		// Vehicle vehicle = getVehicleByReg(registration);
+		Restaurant restaurant = getRestaurantById(store_id);
+		logger.info("Successfully created an order.");
+
+		// initial cost always 0. - Only when booking ends does
+		// the cost gets
+		// calculated.
+		return new Order(id, timestamp, restaurant, customerId, duration, 0);
+
+	    }
+
+	} catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+
+	// TODO: throw a custom exception on failure?
+	return null;
+    }
+
+    public Restaurant getRestaurantById(String store_id) {
+	logger.info("Getting Restaurant by id: " + store_id);
+	Restaurant restaurant = null;
+	Position location;
+	try {
+	    String query = "SELECT store_id, store_name, manager, phone" + " FROM restaurants WHERE store_id LIKE ?";
+	    PreparedStatement ps = this.conn.prepareStatement(query);
+
+	    ps.setString(1, store_id);
+
+	    ResultSet rs = ps.executeQuery();
+
+	    if (rs.next()) {
+		String storeid = rs.getString("store_id");
+		String store_name = rs.getString("store_name");
+		String manager = rs.getString("manager");
+		String phone = rs.getString("phone");
+		location = getRestaurantLocation("store_id");
+
+		restaurant = new Restaurant(storeid, store_name, manager, phone, location);
+
+	    }
+
+	} catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+	return restaurant;
+    }
 
     public boolean isCarBooked(LocalDateTime currtime, String registration) {
 	logger.debug("Checking if vehicle:" + registration + " is double booked.");
@@ -1117,8 +1176,8 @@ public class Database implements Closeable {
     }
 
     /**
-     * Sets the rates in the database according to the passed in map. This
-     * method doesn't support adding/removing rates.
+     * Sets the rates in the database according to the passed in map. This method
+     * doesn't support adding/removing rates.
      *
      * @return {@code true} on success
      */

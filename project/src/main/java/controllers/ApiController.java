@@ -16,11 +16,13 @@ import com.google.gson.JsonParseException;
 
 import controllers.Request.BookingRequest;
 import controllers.Request.ExtendBookingRequest;
+import controllers.Request.OrderRequest;
 import controllers.Request.PositionRequest;
 import controllers.Response.ErrorResponse;
 import model.Booking;
 import model.Database;
 import model.NearbyRestaurants;
+import model.Order;
 import model.Position;
 import model.Restaurant;
 
@@ -125,6 +127,48 @@ public class ApiController {
 		res.status(400);
 		return new Gson().toJson(new ErrorResponse("Bad Request"));
 	    }
+	});
+
+	// create a booking
+	post("/orders", (req, res) -> {
+	    res.type("application/json");
+
+	    String clientId = req.session().attribute("clientId");
+
+	    // return unauthorized response if user not logged in
+	    if (clientId == null) {
+		res.status(401);
+		return new Gson().toJson(new ErrorResponse("Please log in"));
+	    }
+
+	    OrderRequest oreq;
+	    LocalDateTime dateTime;
+
+	    try {
+		oreq = new Gson().fromJson(req.body(), OrderRequest.class);
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		dateTime = LocalDateTime.parse(oreq.timestamp, formatter);
+	    } catch (JsonParseException e) {
+		logger.error(e.getMessage());
+		res.status(400);
+		return new Gson().toJson(new ErrorResponse("Error parsing request"));
+	    }
+
+	    logger.info("Creating an order!");
+	    Database db = new Database();
+
+	    Order order = db.createOrder(dateTime, oreq.store_id, clientId, oreq.duration);
+
+	    db.close();
+	    if (order != null) {
+		res.type("application/json");
+		return new Gson().toJson(order);
+	    } else {
+		res.status(400);
+		return new Gson().toJson(new ErrorResponse("Bad Request"));
+	    }
+
 	});
 
 	// returns a list of the logged in client's bookings

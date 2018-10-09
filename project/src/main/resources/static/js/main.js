@@ -279,7 +279,7 @@ function nearbyCars(pos) {
 	rebu.getNearby(pos, function(nearby) {
 		// show the response
 		sidepane.clear();
-		sidepane.appendHeader("NEARBY CARS");
+		sidepane.appendHeader("NEARBY RESTAURANTS");
 		for (var i = 0; i < nearby.length; i++) {
 			let vehicle = nearby[i];
 			console.log(vehicle);

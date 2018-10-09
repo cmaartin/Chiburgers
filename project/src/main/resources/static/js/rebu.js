@@ -5,7 +5,7 @@ rebu = (function() {
 	var isAdmin = false;
 	
 	function addVehicleDescription(vehicle) {
-		vehicle.description = vehicle.storeid + " " + vehicle.storename + " (" + vehicle.manager + ")";
+		vehicle.description =  vehicle.storename;
 	}
 	
 	return {
