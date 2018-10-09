@@ -41,7 +41,7 @@ public class Restaurant {
 	return this.manager;
     }
 
-    public Position getlocation() {
+    public Position getLocation() {
 	return this.location;
     }
 

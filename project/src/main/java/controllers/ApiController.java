@@ -20,10 +20,9 @@ import controllers.Request.PositionRequest;
 import controllers.Response.ErrorResponse;
 import model.Booking;
 import model.Database;
-import model.NearbyVehicle;
+import model.NearbyRestaurants;
 import model.Position;
 import model.Restaurant;
-import model.Vehicle;
 
 public class ApiController {
 
@@ -39,7 +38,7 @@ public class ApiController {
 	    res.type("application/json");
 
 	    Database db = new Database();
-	    List<Vehicle> vehicles = db.getAvailableVehicles();
+	    List<Restaurant> vehicles = db.getAvailableRestaurants();
 	    db.close();
 
 	    logger.info("Found " + vehicles.size() + " vehicles");
@@ -58,7 +57,8 @@ public class ApiController {
 	    return new Gson().toJson(restaurants);
 	});
 
-	// returns a list of nearby vehicles, giving their distance to the client
+	// returns a list of nearby vehicles, giving their distance to the
+	// client
 	post("/vehicles/nearby", (req, res) -> {
 	    res.type("application/json");
 	    Position pos;
@@ -74,7 +74,7 @@ public class ApiController {
 	    logger.info("Getting vehicles near " + pos);
 
 	    Database db = new Database();
-	    List<NearbyVehicle> nearby = db.getNearbyVehicles(pos);
+	    List<NearbyRestaurants> nearby = db.getNearbyRestaurants(pos);
 	    db.close();
 
 	    logger.info("Found " + nearby.size() + " nearby vehicles");
