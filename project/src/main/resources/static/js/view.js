@@ -71,6 +71,7 @@ var view = (function() {
 			manager.innerText = "Manager: " + vehicle.manager;
 			phone.innerText = "Phone: " + vehicle.phone;
 			
+			
 			container.appendChild(desc);
 			container.appendChild(manager);
 			container.appendChild(phone);
@@ -135,15 +136,15 @@ var view = (function() {
 			var submit = document.createElement("button");
 			
 			// create dropoff fieldset
-			var registration = document.createElement("input");
+			var store_id = document.createElement("input");
 			var dropoff = document.createElement("fieldset");
 			var dropoffLegend = document.createElement("legend");
 			var dropoffTime = document.createElement("select");
 			var dropoffLocation = document.createElement("input");
 			
-			registration.id = "registration";
-			registration.type = "hidden";
-			registration.value = vehicle.registration;
+			store_id.id = "store_id";
+			store_id.type = "hidden";
+			store_id.value = vehicle.storeid;
 			
 			dropoffLegend.innerText = "Menu";
 			dropoffTime.id = "dropoff-time";
@@ -176,10 +177,10 @@ var view = (function() {
 			// set up submit button
 			submit.className = "confirm";
 			submit.type = "submit";
-			submit.innerText = "CONFIRM BOOKING";
+			submit.innerText = "CONFIRM ORDER";
 			
 			// mix it all up
-			form.appendChild(registration);
+			form.appendChild(store_id);
 			form.appendChild(dropoff);
 			form.appendChild(submit);
 			

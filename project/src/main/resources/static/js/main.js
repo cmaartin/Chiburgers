@@ -244,15 +244,15 @@ function submitBooking(vehicle) {
 		var form = document.getElementById("booking-form");
 		var timeSelect = document.getElementById("dropoff-time");
 		var duration = timeSelect.options[timeSelect.selectedIndex].value;
-		var registration = document.getElementById("registration").value;
+		var store_id = document.getElementById("store_id").value;
 		
-		var bookingRequest = {
-			registration: registration,
+		var orderRequest = {
+			store_id: store_id,
 			duration: duration,
 			client: googleUser.getBasicProfile().getEmail()
 		};
 		
-		rebu.requestBooking(bookingRequest, function(succeeded) {
+		rebu.requestBooking(orderRequest, function(succeeded) {
 			if (succeeded) {
 				// show the confirmation screen
 				var vehicleInfo = view.vehicleInfo(vehicle);

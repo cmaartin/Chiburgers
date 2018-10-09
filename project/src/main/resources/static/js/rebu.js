@@ -68,30 +68,30 @@ rebu = (function() {
 			});
 		},
 		
-		requestBooking: function(bookingRequest, callback) {
-			console.log("[api] requesting booking", bookingRequest);
-			var booking = {
+		requestBooking: function(orderRequest, callback) {
+			console.log("[api] requesting order", orderRequest);
+			var order = {
 			    timestamp: view.dateToString(new Date()),
-			    registration: bookingRequest.registration,
-			    customerId: bookingRequest.client,
-			    duration: bookingRequest.duration
+			    store_id: orderRequest.store_id,
+			    customerId: orderRequest.client,
+			    duration: orderRequest.duration
 			}
 			
-			booking = JSON.stringify(booking);
-			console.log("Booking:", booking);
+			order = JSON.stringify(order);
+			console.log("Order:", order);
 						
 			var headers = new Headers();
 			headers.append("Content-Type", "application/json");
-			var request = new Request('/api/bookings', {
+			var request = new Request('/api/orders', {
 				method: 'post',
 				headers: headers,
-				body: booking
+				body: order
 			});
 			
 			fetch(request).then(res => {
 				if (res.status == 200) {
 					res.json()
-					.then(callback(booking));
+					.then(callback(order));
 				} else {
 					callback(null);
 				}
