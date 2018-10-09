@@ -5,7 +5,7 @@ rebu = (function() {
 	var isAdmin = false;
 	
 	function addVehicleDescription(vehicle) {
-		vehicle.description = vehicle.make + " " + vehicle.model + " (" + vehicle.year + ")";
+		vehicle.description = vehicle.storeid + " " + vehicle.storename + " (" + vehicle.manager + ")";
 	}
 	
 	return {
@@ -21,16 +21,14 @@ rebu = (function() {
 		getVehicles: function(callback) {
 			console.log("Get Restaurants");
 			var vehicles = [];
-			var request = new Request(isAdmin ? '/admin/api/vehicles/all' : '/api/vehicles');
+			var request = new Request(isAdmin ? '/admin/api/vehicles/all' : '/api/restaurants');
 			fetch(request)
 			.then(res => res.json())
 			.then(json => {
 				for (var i = 0; i < json.length; i++) {
 					var vehicle = json[i];
-					
 					// TODO: temporary fix for model mismatch
 					addVehicleDescription(vehicle)
-					vehicle.available = (vehicle.status == 0);
 					
 					vehicles.push(vehicle);
 				};

@@ -185,7 +185,7 @@ function displayLocation(pos) {
 
 function createVehicleMarker(vehicle, map, booked = false) {
 	var marker = new google.maps.Marker({
-		position: vehicle.position,
+		position: vehicle.location,
 		map: map,
 		icon: {
 			url: booked ? urlBooked : (vehicle.available ? urlAvail : urlUnavail),
@@ -193,7 +193,7 @@ function createVehicleMarker(vehicle, map, booked = false) {
 			origin: new google.maps.Point(0, 0),
 			anchor: new google.maps.Point(20, 40)
 		},
-		title: vehicle.registration
+		title: vehicle.storename
 	});
 	
 	if (rebu.isAdmin()) {
