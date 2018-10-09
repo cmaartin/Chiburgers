@@ -336,7 +336,7 @@ function endBooking(booking) {
 function displayCurrentBooking() {
 	rebu.getCurrentBooking(function(booking) {
 		// create vehicle marker
-		bookedVehicle = booking.vehicle;
+		bookedVehicle = booking.restaurant;
 		bookedVehicle.marker = createVehicleMarker(bookedVehicle, map, true);
 		
 		// display the card

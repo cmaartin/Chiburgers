@@ -827,9 +827,9 @@ public class Database implements Closeable {
     }
 
     public Order getOrderNow(String clientId) throws SQLException {
-	String query = "SELECT ord.id, ord.timestamp, ord.store_id, ord.customer_id, ord.duration, rst.store_id, rst.store_name, rst.manager, rst.phone "
+	String query = "SELECT ord.id, ord.timestamp, ord.customer_id, ord.duration, rst.store_id, rst.store_name, rst.manager, rst.phone "
 		+ "FROM orders as ord left join restaurants as rst on ord.store_id = rst.store_id "
-		+ "WHERE customer_id like ? and date_add(`timestamp`, interval `duration` minute) > now() limit 1;";
+		+ "WHERE customer_id like ? and date_add(`timestamp`, interval `duration` minute) > now() ORDER BY ord.id limit 1;";
 
 	PreparedStatement ps = this.conn.prepareStatement(query);
 

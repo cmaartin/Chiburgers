@@ -241,7 +241,7 @@ var view = (function() {
 		currentBookingInfo: function(booking) {
 			var container = document.createElement("div");
 			var bookingInfo = this.bookingInfo(booking);
-			var vehicleInfo = this.vehicleInfo(booking.vehicle);
+			var vehicleInfo = this.vehicleInfo(booking.restaurant);
 			
 			container.appendChild(vehicleInfo);
 			container.appendChild(bookingInfo);
