@@ -34,18 +34,6 @@ public class ApiController {
 	before("/*", (req, res) -> logger.info("Client API Request: " + req.uri()));
 
 	// returns a list of available vehicles
-	get("/vehicles", (req, res) -> {
-	    res.type("application/json");
-
-	    Database db = new Database();
-	    List<Restaurant> vehicles = db.getAvailableRestaurants();
-	    db.close();
-
-	    logger.info("Found " + vehicles.size() + " vehicles");
-	    return new Gson().toJson(vehicles);
-	});
-
-	// returns a list of available vehicles
 	get("/restaurants", (req, res) -> {
 	    res.type("application/json");
 

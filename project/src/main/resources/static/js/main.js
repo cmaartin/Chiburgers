@@ -6,7 +6,7 @@ var mapVehicles = [];
 // currently booked vehicle if applicable, marker is stored as above
 var bookedVehicle = null;
 
-var urlAvail = '/img/vehicle-pin-available.png';
+var urlAvail = '/img/hamburger.png';
 var urlUnavail = '/img/vehicle-pin-unavailable.png';
 var urlBooked = '/img/vehicle-pin-booked.png';
 
