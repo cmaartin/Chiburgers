@@ -63,17 +63,17 @@ var view = (function() {
 		vehicleInfo: function(vehicle) {
 			var container = document.createElement("div");
 			var desc = document.createElement("h3");
-			var colour = document.createElement("p");
-			var rego = document.createElement("p");
+			var manager = document.createElement("p");
+			var phone = document.createElement("p");
 			
 			container.className = "vehicle-info";
 			desc.innerText = vehicle.description;
-			colour.innerText = "Colour: " + vehicle.colour;
-			rego.innerText = "Registration: " + vehicle.registration;
+			manager.innerText = "Manager: " + vehicle.manager;
+			phone.innerText = "Phone: " + vehicle.phone;
 			
 			container.appendChild(desc);
-			container.appendChild(colour);
-			container.appendChild(rego);
+			container.appendChild(manager);
+			container.appendChild(phone);
 			
 			return container;
 		},

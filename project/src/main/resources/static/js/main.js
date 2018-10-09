@@ -188,7 +188,7 @@ function createVehicleMarker(vehicle, map, booked = false) {
 		position: vehicle.location,
 		map: map,
 		icon: {
-			url: booked ? urlBooked : (vehicle.available ? urlAvail : urlUnavail),
+			url: booked ? urlBooked : (urlAvail),
 			size: new google.maps.Size(40, 40),
 			origin: new google.maps.Point(0, 0),
 			anchor: new google.maps.Point(20, 40)
@@ -196,35 +196,22 @@ function createVehicleMarker(vehicle, map, booked = false) {
 		title: vehicle.storename
 	});
 	
-	if (rebu.isAdmin()) {
-		marker.addListener('click', function() {
-			console.log("Editing", vehicle);
-			editVehicle(vehicle);
+	marker.addListener('click', function() {
+		console.log("Clicked on marker for", vehicle)
+		// close the currently opened window
+		if (currentInfoWindow) currentInfoWindow.close();
+		
+		// create info window & open it
+		var content = view.infoWindow(vehicle, function(e) {
+			e.preventDefault();
+			bookingForm(vehicle);
 		});
-		// set retired markers transparent
-		if (vehicle.status == 2) {
-			marker.setOptions({'opacity': 0.6});
-		}
-	} else {
-		if (!booked) {
-			marker.addListener('click', function() {
-				console.log("Clicked on marker for", vehicle)
-				// close the currently opened window
-				if (currentInfoWindow) currentInfoWindow.close();
-				
-				// create info window & open it
-				var content = view.infoWindow(vehicle, function(e) {
-					e.preventDefault();
-					bookingForm(vehicle);
-				});
-				var info = new google.maps.InfoWindow({content: content});
-				info.open(map, marker);
-				
-				// update the current window var
-				currentInfoWindow = info;
-			});
-		}
-	}
+		var info = new google.maps.InfoWindow({content: content});
+		info.open(map, marker);
+		
+		// update the current window var
+		currentInfoWindow = info;
+	});
 	
 	return marker;
 }

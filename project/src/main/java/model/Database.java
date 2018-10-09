@@ -202,9 +202,8 @@ public class Database implements Closeable {
 	List<Restaurant> restaruants = new ArrayList<Restaurant>();
 	try {
 	    Statement stmt = this.conn.createStatement();
-	    ResultSet rs = stmt.executeQuery("SELECT `store_id`, `store_name`, `manager`, `phone` "
-		    + "FROM `restaurants` WHERE restaurants.store_id NOT IN" + "(SELECT store_id from bookings"
-		    + " WHERE (timestamp + INTERVAL duration MINUTE) > NOW() ) AND status = 0;");
+	    ResultSet rs = stmt
+		    .executeQuery("SELECT `store_id`, `store_name`, `manager`, `phone` " + "FROM `restaurants`");
 	    while (rs.next()) {
 		String store_id = rs.getString("store_id");
 		String store_name = rs.getString("store_name");

@@ -59,7 +59,7 @@ public class ApiController {
 
 	// returns a list of nearby vehicles, giving their distance to the
 	// client
-	post("/vehicles/nearby", (req, res) -> {
+	post("/restaurants/nearby", (req, res) -> {
 	    res.type("application/json");
 	    Position pos;
 	    try {

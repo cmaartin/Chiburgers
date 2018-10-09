@@ -42,7 +42,7 @@ rebu = (function() {
 			var vehicles = [];
 			var headers = new Headers();
 			headers.append("Content-Type", "application/json");
-			var request = new Request('/api/vehicles/nearby', {
+			var request = new Request('/api/restaurants/nearby', {
 				method: 'post',
 				headers: headers,
 				body: JSON.stringify(pos)
