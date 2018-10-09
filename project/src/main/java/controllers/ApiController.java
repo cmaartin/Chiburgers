@@ -22,6 +22,7 @@ import model.Booking;
 import model.Database;
 import model.NearbyVehicle;
 import model.Position;
+import model.Restaurant;
 import model.Vehicle;
 
 public class ApiController {
@@ -43,6 +44,18 @@ public class ApiController {
 
 	    logger.info("Found " + vehicles.size() + " vehicles");
 	    return new Gson().toJson(vehicles);
+	});
+
+	// returns a list of available vehicles
+	get("/restaurants", (req, res) -> {
+	    res.type("application/json");
+
+	    Database db = new Database();
+	    List<Restaurant> restaurants = db.getRestaurants();
+	    db.close();
+
+	    logger.info("Found " + restaurants.size() + " restaurants");
+	    return new Gson().toJson(restaurants);
 	});
 
 	// returns a list of nearby vehicles, giving their distance to the client

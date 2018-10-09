@@ -91,8 +91,7 @@ public class Database implements Closeable {
 	// Creates table for restaurants
 	String restaurantsSql = "CREATE TABLE IF NOT EXISTS `restaurants` (`store_id` VARCHAR(50) NOT NULL, "
 		+ "`store_name` VARCHAR(50) NOT NULL, " + "`manager` VARCHAR(50) NOT NULL, "
-		+ "`phone` VARCHAR(50) NOT NULL, " + "`location` POINT NOT NULL, " + "`timestamp` DATETIME NOT NULL, "
-		+ "PRIMARY KEY (`store_id`))";
+		+ "`phone` VARCHAR(50) NOT NULL, " + "`location` POINT NOT NULL, " + "PRIMARY KEY (`store_id`))";
 
 	String vehiclesSql = "CREATE TABLE IF NOT EXISTS `vehicles` (`registration` VARCHAR(10) NOT NULL, "
 		+ "`make` VARCHAR(50) NOT NULL, " + "`model` VARCHAR(50) NOT NULL, "
@@ -161,8 +160,8 @@ public class Database implements Closeable {
 	List<Restaurant> restaurants = new ArrayList<Restaurant>();
 	try {
 	    Statement stmt = this.conn.createStatement();
-	    ResultSet rs = stmt.executeQuery(
-		    "SELECT `store_id`, `store_name`, `manager`, `phone`, `location`, `timestamp` FROM `restaurants`");
+	    ResultSet rs = stmt
+		    .executeQuery("SELECT `store_id`, `store_name`, `manager`, `phone`, `location` FROM `restaurants`");
 	    while (rs.next()) {
 		String store_id = rs.getString("store_id");
 		String store_name = rs.getString("store_name");
@@ -170,17 +169,71 @@ public class Database implements Closeable {
 		String phone = rs.getString("phone");
 
 		// construct the object
-		Position location = getVehiclePosition(store_id);
-		int avaliable = rs.getInt("status");
-		String type = rs.getString("type");
+		Position location = getRestaurantLocation(store_id);
 		Restaurant restaurant = new Restaurant(store_id, store_name, manager, phone, location);
 		restaurants.add(restaurant);
 	    }
+
 	    return restaurants;
+
 	} catch (SQLException e) {
 	    logger.error(e.getMessage());
 	    // return an empty list in case of an error
 	    return new ArrayList<Restaurant>();
+	}
+    }
+
+    public Position getRestaurantLocation(String store_id) {
+	LocalDateTime now = Util.getCurrentTime();
+	try {
+
+	    String query = "SELECT ST_X(location) as lat, ST_Y(location) as lng FROM restaurants WHERE store_id = ? "
+		    + "LIMIT 1";
+	    PreparedStatement ps = this.conn.prepareStatement(query);
+
+	    ps.setString(1, store_id);
+
+	    ResultSet rs = ps.executeQuery();
+
+	    rs.next();
+	    double lat = rs.getDouble("lat");
+	    double lng = rs.getDouble("lng");
+	    Position restaurantLocation = new Position(lat, lng);
+	    ps.close();
+	    rs.close();
+	    return restaurantLocation;
+
+	} catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	    return null;
+	}
+    }
+
+    public Position getVehiclePosition(String registration) {
+	LocalDateTime now = Util.getCurrentTime();
+	try {
+
+	    String query = "SELECT ST_X(location) as lat, ST_Y(location) as lng FROM locations WHERE registration = ? "
+		    + "AND MINUTE(NOW()) >= MINUTE(timestamp) ORDER BY timestamp DESC LIMIT 1";
+	    PreparedStatement ps = this.conn.prepareStatement(query);
+
+	    ps.setString(1, registration);
+
+	    ResultSet rs = ps.executeQuery();
+
+	    rs.next();
+	    double lat = rs.getDouble("lat");
+	    double lng = rs.getDouble("lng");
+	    Position restaurantLocation = new Position(lat, lng);
+	    ps.close();
+	    rs.close();
+	    return restaurantLocation;
+
+	} catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	    return null;
 	}
     }
 
@@ -801,33 +854,6 @@ public class Database implements Closeable {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	    return false;
-	}
-    }
-
-    public Position getVehiclePosition(String registration) {
-	LocalDateTime now = Util.getCurrentTime();
-	try {
-
-	    String query = "SELECT ST_X(location) as lat, ST_Y(location) as lng FROM locations WHERE registration = ? "
-		    + "AND MINUTE(NOW()) >= MINUTE(timestamp) ORDER BY timestamp DESC LIMIT 1";
-	    PreparedStatement ps = this.conn.prepareStatement(query);
-
-	    ps.setString(1, registration);
-
-	    ResultSet rs = ps.executeQuery();
-
-	    rs.next();
-	    double lat = rs.getDouble("lat");
-	    double lng = rs.getDouble("lng");
-	    Position restaurantLocation = new Position(lat, lng);
-	    ps.close();
-	    rs.close();
-	    return restaurantLocation;
-
-	} catch (SQLException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	    return null;
 	}
     }
 

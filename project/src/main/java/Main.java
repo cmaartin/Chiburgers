@@ -26,14 +26,13 @@ public class Main implements SparkApplication {
 	// Load configuration
 	try {
 	    Config.loadConfig();
-	    logger.info("Config file loaded");
+	    logger.info("Loading Config");
 	} catch (IOException e) {
-	    // if config can't be found, kill the server and display an error
-	    logger.error("Config file was not loaded, make sure it exists");
+	    logger.error("Unable to load config.");
 	    System.exit(1);
 	}
 
-	logger.info("Launching Rebu server...");
+	logger.info("Start Application");
 
 	// get keys from config depending on environment
 	String mapsApiKey;
