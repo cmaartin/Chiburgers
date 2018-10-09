@@ -32,9 +32,9 @@ public class Database implements Closeable {
 
     /**
      * Create a database object with an underlying {@link java.sql.Connection}
-     * object. This constructor will return a connection to the local development
-     * database when run locally, or a connection to the Cloud SQL database when
-     * deployed.
+     * object. This constructor will return a connection to the local
+     * development database when run locally, or a connection to the Cloud SQL
+     * database when deployed.
      *
      * @throws SQLException
      */
@@ -93,19 +93,10 @@ public class Database implements Closeable {
 		+ "`store_name` VARCHAR(50) NOT NULL, " + "`manager` VARCHAR(50) NOT NULL, "
 		+ "`phone` VARCHAR(50) NOT NULL, " + "`location` POINT NOT NULL, " + "PRIMARY KEY (`store_id`))";
 
-	String vehiclesSql = "CREATE TABLE IF NOT EXISTS `vehicles` (`registration` VARCHAR(10) NOT NULL, "
-		+ "`make` VARCHAR(50) NOT NULL, " + "`model` VARCHAR(50) NOT NULL, "
-		+ "`year` SMALLINT UNSIGNED NOT NULL, " + "`colour` VARCHAR(50) NOT NULL, "
-		+ "status TINYINT UNSIGNED NOT NULL, " + "`type` VARCHAR(50) NOT NULL, "
-		+ "PRIMARY KEY (`registration`))";
-
 	String bookingsSql = "CREATE TABLE IF NOT EXISTS `bookings` (" + "`id` INT NOT NULL AUTO_INCREMENT, "
 		+ "`timestamp` DATETIME NOT NULL, " + "`registration` VARCHAR(10) NOT NULL, "
 		+ "`customer_id` VARCHAR(50) NOT NULL, " + "`duration` SMALLINT UNSIGNED NOT NULL, "
 		+ "PRIMARY KEY (`id`), " + "FOREIGN KEY (`registration`) REFERENCES `vehicles`(`registration`))";
-
-	String admin = "CREATE TABLE IF NOT EXISTS `admins` (" + "`admin_id` VARCHAR(50) NOT NULL, "
-		+ "PRIMARY KEY (`admin_id`))";
 
 	String locationSql = "CREATE TABLE IF NOT EXISTS `locations` (`registration` VARCHAR(10) NOT NULL, "
 		+ "timestamp DATETIME NOT NULL, location POINT NOT NULL)";
@@ -113,15 +104,9 @@ public class Database implements Closeable {
 	String users = "CREATE TABLE IF NOT EXISTS `users` (`cid` VARCHAR(50) NOT NULL, "
 		+ "`email` VARCHAR(50) NOT NULL, " + "PRIMARY KEY (`cid`))";
 
-	String cost = "CREATE TABLE IF NOT EXISTS `costs` (`type` VARCHAR(50) NOT NULL, "
-		+ "`rate` DECIMAL(20, 2) NOT NULL, " + "`base` INT NOT NULL, " + "PRIMARY KEY (`type`))";
-
 	Statement stmt = this.conn.createStatement();
 	stmt.execute(restaurantsSql);
-	stmt.execute(vehiclesSql);
-	stmt.execute(cost);
 	stmt.execute(bookingsSql);
-	stmt.execute(admin);
 	stmt.execute(locationSql);
 	stmt.execute(users);
 
@@ -531,7 +516,8 @@ public class Database implements Closeable {
 	try {
 
 	    // CHECK
-	    // Checks this timestamp to see if its booked already for the same car.
+	    // Checks this timestamp to see if its booked already for the same
+	    // car.
 	    if (!isCarBooked(timestamp, registration)) {
 		if (!isUserDoubleBooked(timestamp, customerId)) {
 		    // INSERT
@@ -558,7 +544,8 @@ public class Database implements Closeable {
 			Vehicle vehicle = getVehicleByReg(registration);
 			logger.info("Successfully inserted booking");
 
-			// initial cost always 0. - Only when booking ends does the cost gets
+			// initial cost always 0. - Only when booking ends does
+			// the cost gets
 			// calculated.
 			return new Booking(id, timestamp, vehicle, customerId, duration, startLocation, 0);
 		    }
@@ -640,7 +627,8 @@ public class Database implements Closeable {
 	return false; // Not double Booked.
     }
 
-    // Work in progress, will probably merge it together with CarDoubleBooked after
+    // Work in progress, will probably merge it together with CarDoubleBooked
+    // after
     // more testing..
     public boolean isUserDoubleBooked(LocalDateTime currtime, String customerId) {
 	logger.info("Checking if user:" + customerId + "double booked.");
@@ -1033,7 +1021,8 @@ public class Database implements Closeable {
 	    boolean accept = false;
 
 	    if (currentBooking != null) {
-		// calculate the number of minutes between the current time & the booking start
+		// calculate the number of minutes between the current time &
+		// the booking start
 		LocalDateTime start = currentBooking.getTimestamp();
 		LocalDateTime current = Util.getCurrentTime();
 		int newDuration = (int) Math.ceil(Duration.between(start, current).toMinutes());
@@ -1048,7 +1037,8 @@ public class Database implements Closeable {
 		ps.setInt(2, currentBooking.getId());
 
 		int affectedRows = ps.executeUpdate();
-		if (affectedRows == 1) { // if something changed, proceed with cost calculation and return.
+		if (affectedRows == 1) { // if something changed, proceed with
+					 // cost calculation and return.
 		    ps.close();
 
 		    // gets latest booking of customer.
@@ -1148,7 +1138,8 @@ public class Database implements Closeable {
 	    e.printStackTrace();
 	    return true; // errorz
 	}
-	logger.info(" Booking Timestamp error occured. "); // the timestamps are incorrect.
+	logger.info(" Booking Timestamp error occured. "); // the timestamps are
+							   // incorrect.
 	return true; // Booking ended.
 
     }
@@ -1220,8 +1211,12 @@ public class Database implements Closeable {
 	}
 
 	double overtime = (double) duration / 30;
-	double totalprice = base + rate * Math.ceil(overtime); // always rounds up, so we charge an extra 30min if
-							       // overtime 30 min intervals.
+	double totalprice = base + rate * Math.ceil(overtime); // always rounds
+							       // up, so we
+							       // charge an
+							       // extra 30min if
+							       // overtime 30
+							       // min intervals.
 	logger.info("Costs : " + totalprice);
 
 	return totalprice;
@@ -1248,8 +1243,8 @@ public class Database implements Closeable {
     }
 
     /**
-     * Sets the rates in the database according to the passed in map. This method
-     * doesn't support adding/removing rates.
+     * Sets the rates in the database according to the passed in map. This
+     * method doesn't support adding/removing rates.
      *
      * @return {@code true} on success
      */

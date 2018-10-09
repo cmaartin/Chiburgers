@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.appengine.api.utils.SystemProperty;
 
-import controllers.AdminApiController;
-import controllers.AdminUiController;
 import controllers.ApiController;
 import controllers.UiController;
 import spark.Spark;
@@ -62,10 +60,6 @@ public class Main implements SparkApplication {
 	// create routes
 	new UiController(mapsApiKey, googleClientId);
 	path("/api", () -> new ApiController());
-	path("/admin", () -> {
-	    new AdminUiController(mapsApiKey, googleClientId);
-	    path("/api", () -> new AdminApiController());
-	});
 	// fix for /admin 404
 	// routes with & without trailing slash are treated as separate
 	redirect.get("/admin", "/admin/");
