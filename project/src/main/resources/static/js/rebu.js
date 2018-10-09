@@ -70,28 +70,28 @@ rebu = (function() {
 		
 		requestBooking: function(orderRequest, callback) {
 			console.log("[api] requesting order", orderRequest);
-			var order = {
+			var booking = {
 			    timestamp: view.dateToString(new Date()),
 			    store_id: orderRequest.store_id,
 			    customerId: orderRequest.client,
 			    duration: orderRequest.duration
 			}
 			
-			order = JSON.stringify(order);
-			console.log("Order:", order);
+			booking = JSON.stringify(booking);
+			console.log("Order:", booking);
 						
 			var headers = new Headers();
 			headers.append("Content-Type", "application/json");
 			var request = new Request('/api/orders', {
 				method: 'post',
 				headers: headers,
-				body: order
+				body: booking
 			});
 			
 			fetch(request).then(res => {
 				if (res.status == 200) {
 					res.json()
-					.then(callback(order));
+					.then(callback(booking));
 				} else {
 					callback(null);
 				}
@@ -109,8 +109,8 @@ rebu = (function() {
 		},
 		
 		getCurrentBooking: function(callback) {
-			console.log("[api] getting current booking");
-			var request = new Request('/api/bookings/now');
+			console.log("[api] getting current order");
+			var request = new Request('/api/orders/now');
 			fetch(request)
 			.then(res => {
 				if (res.status == 200) {

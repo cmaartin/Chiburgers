@@ -826,6 +826,41 @@ public class Database implements Closeable {
 	}
     }
 
+    public Order getOrderNow(String clientId) throws SQLException {
+	String query = "SELECT ord.id, ord.timestamp, ord.store_id, ord.customer_id, ord.duration, rst.store_id, rst.store_name, rst.manager, rst.phone "
+		+ "FROM orders as ord left join restaurants as rst on ord.store_id = rst.store_id "
+		+ "WHERE customer_id like ? and date_add(`timestamp`, interval `duration` minute) > now() limit 1;";
+
+	PreparedStatement ps = this.conn.prepareStatement(query);
+
+	ps.setString(1, clientId);
+
+	ResultSet rs = ps.executeQuery();
+
+	if (rs.next()) {
+	    int id = rs.getInt("id");
+	    LocalDateTime timestamp = rs.getTimestamp("timestamp").toLocalDateTime();
+	    String customer_id = rs.getString("customer_id");
+
+	    String store_id = rs.getString("store_id");
+	    String store_name = rs.getString("store_name");
+	    String manager = rs.getString("manager");
+	    String phone = rs.getString("phone");
+	    int duration = rs.getInt("duration");
+	    Position location = getRestaurantLocation(store_id);
+
+	    Restaurant restaurant = new Restaurant(store_id, store_name, manager, phone, location);
+
+	    ps.close();
+	    rs.close();
+
+	    // cost is 0 atm
+	    return new Order(id, timestamp, restaurant, customer_id, duration, 0);
+	} else {
+	    return null;
+	}
+    }
+
     public Booking getBookingNow(String clientId) throws SQLException {
 	String query = "SELECT bk.id, bk.timestamp, bk.customer_id, bk.duration, vh.registration, vh.make, vh.model, vh.year, vh.colour, vh.status, vh.type, costs.base, costs.rate "
 		+ "FROM bookings as bk left join vehicles as vh on bk.registration = vh.registration , costs "
