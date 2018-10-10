@@ -280,6 +280,7 @@ public class ApiController {
 
 	get("/orders/end", (req, res) -> {
 	    res.type("application/json");
+	    Order or;
 
 	    String clientId = req.session().attribute("clientId");
 	    logger.info("Ending current booking of: " + clientId);
@@ -291,8 +292,7 @@ public class ApiController {
 	    }
 
 	    Database db = new Database();
-	    db.endBooking(clientId);
-
+	    db.endOrder(clientId);
 	    return "";
 	});
 

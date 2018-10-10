@@ -277,19 +277,20 @@ public class Database implements Closeable {
     public void endOrder(String clientId) {
 	try {
 	    Order currentOrder = getOrderNow(clientId);
-	    boolean accept = false;
 
 	    if (currentOrder != null) {
-		int newDuration = 0;
+		LocalDateTime start = currentOrder.getTimestamp();
+		LocalDateTime current = Util.getCurrentTime();
+		int newDuration = (int) Math.ceil(Duration.between(start, current).toMinutes());
 
 		// update the booking record
 		String update = "update `orders` set `duration` = ? where `id` = ?";
 		PreparedStatement ps = this.conn.prepareStatement(update);
-
-		logger.info("Setting duration of booking " + currentOrder.getId() + " to " + newDuration);
-
 		ps.setInt(1, newDuration);
 		ps.setInt(2, currentOrder.getId());
+		logger.info("Setting duration of booking " + currentOrder.getId() + " to " + newDuration);
+
+		ps.execute();
 
 	    }
 	} catch (SQLException e) {
