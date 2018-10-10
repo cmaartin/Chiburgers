@@ -27,14 +27,6 @@ public class Database implements Closeable {
 
     private Connection conn;
 
-    /**
-     * Create a database object with an underlying {@link java.sql.Connection}
-     * object. This constructor will return a connection to the local development
-     * database when run locally, or a connection to the Cloud SQL database when
-     * deployed.
-     *
-     * @throws SQLException
-     */
     public Database() {
 	try {
 	    if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
@@ -70,18 +62,12 @@ public class Database implements Closeable {
 	}
     }
 
-    /**
-     * Initialize the database with the required tables
-     *
-     * @throws SQLException
-     */
     private void initDatabase() throws SQLException {
-	logger.info("Initializing the database");
+	logger.info("Starting Database");
 
-	// set tz on production db
 	if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
-	    try (Statement tzStmt = this.conn.createStatement()) {
-		tzStmt.execute("set time_zone = 'Australia/Melbourne'");
+	    try (Statement query = this.conn.createStatement()) {
+		query.execute("set time_zone = 'Australia/Melbourne'");
 	    }
 	}
 
@@ -109,25 +95,20 @@ public class Database implements Closeable {
 	try (Statement timeStmt = this.conn.createStatement()) {
 	    ResultSet rs = timeStmt.executeQuery("select now()");
 	    if (rs.next()) {
-		logger.warn("SQL Server time: " + rs.getString(1));
+		logger.warn("Server Time: " + rs.getString(1));
 	    } else {
-		logger.warn("SQL Server time is unknown");
+		logger.warn("Unknown Time");
 	    }
 	}
     }
 
-    /**
-     * Close the underlying database connection
-     *
-     * @throws SQLException
-     */
     @Override
     public void close() {
 	try {
-	    logger.info("Closing the database");
+
 	    this.conn.close();
 	} catch (SQLException e) {
-	    logger.error("Failed to close DB");
+
 	    logger.error(e.getMessage());
 	}
     }
@@ -183,7 +164,7 @@ public class Database implements Closeable {
 	    return restaurantLocation;
 
 	} catch (SQLException e) {
-	    // TODO Auto-generated catch block
+
 	    e.printStackTrace();
 	    return null;
 	}
@@ -212,7 +193,7 @@ public class Database implements Closeable {
 	    return restaruants;
 	} catch (SQLException e) {
 	    logger.error(e.getMessage());
-	    // return an empty list in case of an error
+
 	    return new ArrayList<Restaurant>();
 	}
     }
@@ -281,7 +262,6 @@ public class Database implements Closeable {
 		LocalDateTime current = Util.getCurrentTime();
 		int newDuration = (int) Math.ceil(Duration.between(start, current).toMinutes());
 
-		// update the booking record
 		String update = "update `orders` set `duration` = ? where `id` = ?";
 		PreparedStatement ps = this.conn.prepareStatement(update);
 		ps.setInt(1, newDuration);
@@ -329,7 +309,7 @@ public class Database implements Closeable {
 	    return orders;
 	} catch (SQLException e) {
 	    logger.error(e.getMessage());
-	    // return an empty list in case of an error
+
 	    return new ArrayList<Order>();
 	}
     }
@@ -357,20 +337,15 @@ public class Database implements Closeable {
 	    pStmnt.executeUpdate();
 
 	    Location startLocation = getRestaurantLocation(store_id);
-	    // get the inserted booking's ID
+
 	    ResultSet rs = pStmnt.getGeneratedKeys();
 	    if (rs.next()) {
 		int id = rs.getInt(1);
 
 		pStmnt.close();
-
-		// Vehicle vehicle = getVehicleByReg(registration);
 		Restaurant restaurant = getRestaurantById(store_id);
 		logger.info("Successfully created an order.");
 
-		// initial cost always 0. - Only when booking ends does
-		// the cost gets
-		// calculated.
 		return new Order(id, timestamp, restaurant, customerId, duration, item);
 
 	    }
@@ -449,7 +424,8 @@ public class Database implements Closeable {
     public Order getOrderNow(String clientId) throws SQLException {
 	String query = "SELECT ord.id, ord.timestamp, ord.customer_id, ord.duration, ord.item, rst.store_id, rst.store_name, rst.manager, rst.phone "
 		+ "FROM orders as ord left join restaurants as rst on ord.store_id = rst.store_id "
-		+ "WHERE customer_id like ? and date_add(`timestamp`, interval `duration` minute) > now() ORDER BY ord.id limit 1;";
+		+ "WHERE date_add(`timestamp`, interval `duration` minute) > now() and customer_id like ? "
+		+ "ORDER BY ord.id limit 1;";
 
 	PreparedStatement ps = this.conn.prepareStatement(query);
 
