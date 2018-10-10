@@ -590,6 +590,38 @@ public class Database implements Closeable {
 	return false; // Not double Booked.
     }
 
+    public boolean hasDoubleOrder(LocalDateTime currtime, String cust_id) {
+	logger.info("Has " + cust_id + "double ordered.");
+	try {
+	    // Gets the latest timestamp of a car booking.
+	    String query = "SELECT timestamp,duration FROM orders WHERE customer_id = ? " + "ORDER BY id DESC LIMIT 1";
+	    PreparedStatement ps = this.conn.prepareStatement(query);
+
+	    ps.setString(1, cust_id);
+
+	    ResultSet rs = ps.executeQuery();
+
+	    if (rs.next()) {
+		// Gets when the car is going to end.
+		LocalDateTime orderTime = rs.getTimestamp("timestamp").toLocalDateTime();
+		LocalDateTime endOrder = orderTime.plusMinutes(rs.getInt(2));
+
+		if (currtime.isBefore(endOrder) || currtime.isEqual(endOrder)) {
+		    logger.info("[Server] Error: " + cust_id + " has an order in place.");
+		    rs.close();
+		    ps.close();
+		    return true; // It is double booked.
+		}
+
+	    }
+	} catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+
+	return false; // Not double Booked.
+    }
+
     public Boolean changeVehicleStatus(String registration, int status) {
 	try {
 	    String query = "UPDATE vehicles set status = ? WHERE registration = ?";
