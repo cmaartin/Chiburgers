@@ -154,7 +154,7 @@ rebu = (function() {
 		},
 		
 		endCurrentBooking: function(callback) {
-			console.log("[api] ending current booking");
+			console.log("[server] end order");
 			
 			var headers = new Headers();
 			headers.append("Content-Type", "application/json");

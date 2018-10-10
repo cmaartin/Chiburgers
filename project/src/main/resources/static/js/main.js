@@ -246,14 +246,10 @@ function submitBooking(vehicle) {
 		var duration = timeSelect.options[timeSelect.selectedIndex].value;
 		var store_id = document.getElementById("store_id").value;
 		
-		var orderRequest = {
-				store_id: store_id,
-				duration: duration,
-				client: googleUser.getBasicProfile().getEmail()
-			};
+		
 			
-	    	rebu.requestBooking(orderRequest, function(succeeded) {
-				if (succeeded) {
+	    	
+				
 					// show the confirmation screen
 					var vehicleInfo = view.vehicleInfo(vehicle);
 					sidepane.clear();
@@ -302,17 +298,37 @@ function submitBooking(vehicle) {
 
 				        onAuthorize: function(data, actions) {
 					        return actions.payment.execute().then(function() {
-						    	sidepane.clear();
-						    	sidepane.appendHeader("PAYMENT");
-						    	sidepane.append(view.paymentConfirmation(true));
-						    	var message = document.createElement("p");
-						    	message.innerText = "Make sure that you pick up your burger at the chosen restaurant.";
-						    	sidepane.append(message);
-						    	
-						    	rebu.getVehicles(displayVehicles);
-								// show booking marker & card
-								
-								displayCurrentBooking()
+					        	var orderRequest = {
+				        				store_id: store_id,
+				        				duration: duration,
+				        				client: googleUser.getBasicProfile().getEmail()
+				        		};
+				        		
+					        	rebu.requestBooking(orderRequest, function(succeeded) {
+					        		
+					        		if (succeeded) {
+					        			sidepane.clear();
+								    	sidepane.appendHeader("PAYMENT");
+								    	sidepane.append(view.paymentConfirmation(true));
+								    	var message = document.createElement("p");
+								    	message.innerText = "Make sure that you pick up your burger at the chosen restaurant.";
+								    	sidepane.append(message);
+								    	
+								    	rebu.getVehicles(displayVehicles);
+										// show booking marker & card
+										
+										displayCurrentBooking();
+					        		} else {
+					        			sidepane.clear();
+								    	sidepane.appendHeader("You have already ordered!");
+								    	var message = document.createElement("p");
+								    	message.innerText = "Make sure that your current order has completed";
+								    	sidepane.append(message);
+										
+									}
+					        		
+					        	});
+					        	
 
 								
 					        });
@@ -321,20 +337,12 @@ function submitBooking(vehicle) {
 					    	sidepane.clear();
 					    	sidepane.appendHeader("PAYMENT");
 					    	sidepane.append(view.paymentConfirmation(false));
+					    	alert("Order failed");
 					    }
 
 				    }, '#paypal-button-container');
 					sidepane.open();
 					
-				} else {
-					alert("Booking failed");
-				}
-		});
-	    	
-		
-		
-		
-		
 
 	} else {
 		showLoginHint();
