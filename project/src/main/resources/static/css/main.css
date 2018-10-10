@@ -509,3 +509,8 @@ div.ratesTable > div > label {
 div.ratesTable > div > input {
 	margin: 0;
 }
+
+#paypal-button-container {
+	text-align: right;
+	margin: 32px 0;
+}

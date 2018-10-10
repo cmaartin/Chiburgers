@@ -324,6 +324,37 @@ var view = (function() {
 				container.appendChild(buttons[i]);
 			}
 			
+			
+			return container;
+		},
+		
+		payment: function(booking) {
+			var container = document.createElement("div");
+			
+			var description = document.createElement("p");
+			description.innerText = "Pay for your booking using the button below.";
+			
+			var paypalButton = document.createElement("div");
+			paypalButton.id = "paypal-button-container";
+			
+			container.appendChild(description);
+			container.appendChild(paypalButton);
+			
+			return container;
+		},
+		
+		paymentConfirmation(success) {
+			var container = document.createElement("div");
+			
+			var description = document.createElement("p");
+			if (success) {
+				description.innerText = "Payment successful!";
+			} else {
+				description.innerText = "Payment failed. Please contact an administrator.";
+			}
+			
+			container.appendChild(description);
+			
 			return container;
 		}
 		
