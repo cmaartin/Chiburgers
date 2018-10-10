@@ -1162,31 +1162,6 @@ public class Database implements Closeable {
 
     }
 
-    // Uses the ID of the booking to edit the booking.
-    public Boolean extendBooking(String clientId, int extraDuration) {
-	logger.info("Extending Booking of: " + clientId);
-	try {
-	    Booking currentBooking = getBookingNow(clientId);
-	    if (currentBooking != null) {
-		String update = "update `bookings` set `duration` = `duration` + ? where id = ?";
-		PreparedStatement ps = this.conn.prepareStatement(update);
-		ps.setInt(1, extraDuration);
-		ps.setInt(2, currentBooking.getId());
-
-		int affectedRows = ps.executeUpdate();
-
-		if (affectedRows == 1) {
-		    return true;
-		}
-	    }
-	} catch (SQLException e) {
-	    logger.error(e.getMessage());
-	    e.printStackTrace();
-	}
-
-	return false;
-    }
-
     public Boolean editVehicle(String registration, String make, String model, int year, String colour, int status) {
 	logger.info("Editing  Vehicle with Rego:" + registration);
 	try {

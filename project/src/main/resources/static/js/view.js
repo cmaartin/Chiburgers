@@ -249,20 +249,15 @@ var view = (function() {
 			return container;
 		},
 		
-		currentBookingButtons: function(booking, findCallback, extendCallback, endCallback) {
+		currentBookingButtons: function(booking, findCallback, endCallback) {
 			var buttons = new Array();
 			
 			var findVehicleButton = document.createElement("button");
-			var extendBookingButton = document.createElement("button");
 			var endBookingButton = document.createElement("button");
 			
 			findVehicleButton.addEventListener("click", function(e) {
 				e.preventDefault();
 				findCallback(booking);
-			});
-			extendBookingButton.addEventListener("click", function(e) {
-				e.preventDefault();
-				extendCallback(booking);
 			});
 			endBookingButton.addEventListener("click", function(e) {
 				e.preventDefault();
@@ -270,18 +265,14 @@ var view = (function() {
 			});
 			
 			findVehicleButton.className = "confirm";
-			extendBookingButton.className = "confirm";
 			endBookingButton.className = "confirm";
 			
-			findVehicleButton.innerText = "FIND CAR";
+			findVehicleButton.innerText = "FIND STORE";
 			findVehicleButton.style = "margin-right: 8px"
-			extendBookingButton.innerText = "EXTEND";
-			extendBookingButton.style = "background-color: #4CAF50";
 			endBookingButton.innerText = "END BOOKING";
 			endBookingButton.style = "float: right; background-color: #F44336";
 			
 			buttons.push(findVehicleButton);
-			buttons.push(extendBookingButton);
 			buttons.push(endBookingButton);
 			
 			return buttons;

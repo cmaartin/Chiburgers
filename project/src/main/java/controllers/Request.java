@@ -85,12 +85,4 @@ class Request {
     static class UserRequest {
 	String email;
     }
-
-    /**
-     * Parses extend booking
-     */
-    static class ExtendBookingRequest {
-	int extraDuration;
-    }
-
 }
