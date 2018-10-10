@@ -245,15 +245,19 @@ function submitBooking(vehicle) {
 		var timeSelect = document.getElementById("dropoff-time");
 		var duration = timeSelect.options[timeSelect.selectedIndex].value;
 		var store_id = document.getElementById("store_id").value;
-		
-		
-			
+		var item = timeSelect.options[timeSelect.selectedIndex].text;
+		var itemP =  document.createElement("p");
+		itemP.innerText = item;
 	    	
 				
 					// show the confirmation screen
 					var vehicleInfo = view.vehicleInfo(vehicle);
 					sidepane.clear();
-					sidepane.appendHeader("BOOK YOUR CAR");
+					sidepane.appendHeader("YOUR ORDER: ");
+					
+					sidepane.append(itemP);
+					
+					sidepane.appendHeader("Location: ");
 					sidepane.append(vehicleInfo);
 					sidepane.append(view.bookingConfirmed());
 					//sidepane.clear();
@@ -301,6 +305,7 @@ function submitBooking(vehicle) {
 					        	var orderRequest = {
 				        				store_id: store_id,
 				        				duration: duration,
+				        				item: item,
 				        				client: googleUser.getBasicProfile().getEmail()
 				        		};
 				        		

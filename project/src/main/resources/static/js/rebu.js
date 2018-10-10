@@ -74,7 +74,8 @@ rebu = (function() {
 			    timestamp: view.dateToString(new Date()),
 			    store_id: orderRequest.store_id,
 			    customerId: orderRequest.client,
-			    duration: orderRequest.duration
+			    duration: orderRequest.duration,
+			    item: item
 			}
 			
 			booking = JSON.stringify(booking);
