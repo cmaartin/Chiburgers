@@ -160,7 +160,7 @@ rebu = (function() {
 			var headers = new Headers();
 			headers.append("Content-Type", "application/json");
 			
-			var request = new Request('/api/bookings/end');
+			var request = new Request('/api/orders/end');
 			
 			fetch(request)
 			.then(res => {

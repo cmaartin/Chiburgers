@@ -93,7 +93,7 @@ public class Database implements Closeable {
 		+ "`phone` VARCHAR(50) NOT NULL, " + "`location` POINT NOT NULL, " + "PRIMARY KEY (`store_id`))";
 
 	String ordersSql = "CREATE TABLE IF NOT EXISTS `orders` (" + "`id` INT NOT NULL AUTO_INCREMENT, "
-		+ "`timestamp` DATETIME NOT NULL, " + "`store_id` VARCHAR(10) NOT NULL, "
+		+ "`timestamp` DATETIME NOT NULL, " + "`store_id` VARCHAR(50) NOT NULL, "
 		+ "`customer_id` VARCHAR(50) NOT NULL, " + "`duration` SMALLINT UNSIGNED NOT NULL, "
 		+ "`item` VARCHAR(50) NOT NULL, " + "PRIMARY KEY (`id`), "
 		+ "FOREIGN KEY (`store_id`) REFERENCES `restaurants`(`store_id`))";
@@ -272,6 +272,30 @@ public class Database implements Closeable {
 
 	}
 	return sortedNearestRestaurants;
+    }
+
+    public void endOrder(String clientId) {
+	try {
+	    Order currentOrder = getOrderNow(clientId);
+	    boolean accept = false;
+
+	    if (currentOrder != null) {
+		int newDuration = 0;
+
+		// update the booking record
+		String update = "update `orders` set `duration` = ? where `id` = ?";
+		PreparedStatement ps = this.conn.prepareStatement(update);
+
+		logger.info("Setting duration of booking " + currentOrder.getId() + " to " + newDuration);
+
+		ps.setInt(1, newDuration);
+		ps.setInt(2, currentOrder.getId());
+
+	    }
+	} catch (SQLException e) {
+	    logger.error(e.getMessage());
+	    e.printStackTrace();
+	}
     }
 
     /**

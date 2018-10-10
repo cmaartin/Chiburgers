@@ -278,6 +278,24 @@ public class ApiController {
 
 	});
 
+	get("/orders/end", (req, res) -> {
+	    res.type("application/json");
+
+	    String clientId = req.session().attribute("clientId");
+	    logger.info("Ending current booking of: " + clientId);
+
+	    // return unauthorized response if user not logged in
+	    if (clientId == null) {
+		res.status(401);
+		return new Gson().toJson(new ErrorResponse("Please log in"));
+	    }
+
+	    Database db = new Database();
+	    db.endBooking(clientId);
+
+	    return "";
+	});
+
 	// extend a booking
 	post("/bookings/extend", (req, res) -> {
 	    res.type("application/json");
