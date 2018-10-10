@@ -40,6 +40,7 @@ class Request {
 	String timestamp;
 	String store_id;
 	int duration;
+	String item;
     }
 
     /**

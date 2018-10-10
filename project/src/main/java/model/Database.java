@@ -31,9 +31,9 @@ public class Database implements Closeable {
 
     /**
      * Create a database object with an underlying {@link java.sql.Connection}
-     * object. This constructor will return a connection to the local development
-     * database when run locally, or a connection to the Cloud SQL database when
-     * deployed.
+     * object. This constructor will return a connection to the local
+     * development database when run locally, or a connection to the Cloud SQL
+     * database when deployed.
      *
      * @throws SQLException
      */
@@ -95,15 +95,8 @@ public class Database implements Closeable {
 	String ordersSql = "CREATE TABLE IF NOT EXISTS `orders` (" + "`id` INT NOT NULL AUTO_INCREMENT, "
 		+ "`timestamp` DATETIME NOT NULL, " + "`store_id` VARCHAR(10) NOT NULL, "
 		+ "`customer_id` VARCHAR(50) NOT NULL, " + "`duration` SMALLINT UNSIGNED NOT NULL, "
-		+ "PRIMARY KEY (`id`), " + "FOREIGN KEY (`store_id`) REFERENCES `restaurants`(`store_id`))";
-
-	String bookingsSql = "CREATE TABLE IF NOT EXISTS `bookings` (" + "`id` INT NOT NULL AUTO_INCREMENT, "
-		+ "`timestamp` DATETIME NOT NULL, " + "`registration` VARCHAR(10) NOT NULL, "
-		+ "`customer_id` VARCHAR(50) NOT NULL, " + "`duration` SMALLINT UNSIGNED NOT NULL, "
-		+ "PRIMARY KEY (`id`), " + "FOREIGN KEY (`registration`) REFERENCES `vehicles`(`registration`))";
-
-	String locationSql = "CREATE TABLE IF NOT EXISTS `locations` (`registration` VARCHAR(10) NOT NULL, "
-		+ "timestamp DATETIME NOT NULL, location POINT NOT NULL)";
+		+ "`item` VARCHAR(50) NOT NULL, " + "PRIMARY KEY (`id`), "
+		+ "FOREIGN KEY (`store_id`) REFERENCES `restaurants`(`store_id`))";
 
 	String users = "CREATE TABLE IF NOT EXISTS `users` (`cid` VARCHAR(50) NOT NULL, "
 		+ "`email` VARCHAR(50) NOT NULL, " + "PRIMARY KEY (`cid`))";
@@ -111,8 +104,6 @@ public class Database implements Closeable {
 	Statement stmt = this.conn.createStatement();
 	stmt.execute(restaurantsSql);
 	stmt.execute(ordersSql);
-	stmt.execute(bookingsSql);
-	stmt.execute(locationSql);
 	stmt.execute(users);
 
 	stmt.close();
@@ -448,12 +439,12 @@ public class Database implements Closeable {
      *
      * @throws SQLException
      */
-    public Order createOrder(LocalDateTime timestamp, String store_id, String customerId, int duration) {
+    public Order createOrder(LocalDateTime timestamp, String store_id, String customerId, int duration, String item) {
 	logger.info("Create Orders for " + customerId);
 	try {
 
-	    String query = "INSERT INTO orders " + "(timestamp, store_id, customer_id, duration) VALUES "
-		    + "(?, ?, ?, ?)";
+	    String query = "INSERT INTO orders " + "(timestamp, store_id, customer_id, duration, item) VALUES "
+		    + "(?, ?, ?, ?,?)";
 
 	    PreparedStatement pStmnt = this.conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
@@ -461,6 +452,7 @@ public class Database implements Closeable {
 	    pStmnt.setString(2, store_id);
 	    pStmnt.setString(3, customerId);
 	    pStmnt.setInt(4, duration);
+	    pStmnt.setString(5, item);
 
 	    pStmnt.executeUpdate();
 
@@ -479,7 +471,7 @@ public class Database implements Closeable {
 		// initial cost always 0. - Only when booking ends does
 		// the cost gets
 		// calculated.
-		return new Order(id, timestamp, restaurant, customerId, duration, 0);
+		return new Order(id, timestamp, restaurant, customerId, duration, item);
 
 	    }
 
@@ -859,7 +851,7 @@ public class Database implements Closeable {
     }
 
     public Order getOrderNow(String clientId) throws SQLException {
-	String query = "SELECT ord.id, ord.timestamp, ord.customer_id, ord.duration, rst.store_id, rst.store_name, rst.manager, rst.phone "
+	String query = "SELECT ord.id, ord.timestamp, ord.customer_id, ord.duration, ord.item, rst.store_id, rst.store_name, rst.manager, rst.phone "
 		+ "FROM orders as ord left join restaurants as rst on ord.store_id = rst.store_id "
 		+ "WHERE customer_id like ? and date_add(`timestamp`, interval `duration` minute) > now() ORDER BY ord.id limit 1;";
 
@@ -879,6 +871,7 @@ public class Database implements Closeable {
 	    String manager = rs.getString("manager");
 	    String phone = rs.getString("phone");
 	    int duration = rs.getInt("duration");
+	    String item = rs.getString("item");
 	    Position location = getRestaurantLocation(store_id);
 
 	    Restaurant restaurant = new Restaurant(store_id, store_name, manager, phone, location);
@@ -887,7 +880,7 @@ public class Database implements Closeable {
 	    rs.close();
 
 	    // cost is 0 atm
-	    return new Order(id, timestamp, restaurant, customer_id, duration, 0);
+	    return new Order(id, timestamp, restaurant, customer_id, duration, item);
 	} else {
 	    return null;
 	}
@@ -1243,8 +1236,8 @@ public class Database implements Closeable {
     }
 
     /**
-     * Sets the rates in the database according to the passed in map. This method
-     * doesn't support adding/removing rates.
+     * Sets the rates in the database according to the passed in map. This
+     * method doesn't support adding/removing rates.
      *
      * @return {@code true} on success
      */

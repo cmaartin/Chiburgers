@@ -155,12 +155,12 @@ var view = (function() {
 			
 			// add options to select
 			options = [
-				{value: 60, text: "Burger 1"},
-				{value: 120, text: "Burger 2"},
-				{value: 180, text: "Burger 3"},
-				{value: 360, text: "Burger 4"},
-				{value: 720, text: "Burger 5"},
-				{value: 1440, text: "Burger 6"},
+				{value: 10, text: "Basic ChiBurg Luncheon"},
+				{value: 25, text: "Grand ChiBurg Luncheon"},
+				{value: 25, text: "Angus Chiburger Luncheon"},
+				{value: 13, text: "Big ChiMac Burger Luncheon"},
+				{value: 10, text: "Fish ChiBurger Luncheon"},
+				{value: 10, text: "Happy ChiBurger Meal"},
 			];
 			for (var i = 0; i < options.length; i++) {
 				option = document.createElement("option");
