@@ -11,12 +11,12 @@ public class Restaurant {
     private final String manager;
 
     // location of restaurant. geocoords
-    private final Position location;
+    private final Location location;
     // 0 - active; 1 - inactive; 2 - retired
 
     private final String phone;
 
-    protected Restaurant(String storeid, String storename, String manager, String phone, Position location) {
+    protected Restaurant(String storeid, String storename, String manager, String phone, Location location) {
 	this.storeid = storeid;
 	this.storename = storename;
 	this.manager = manager;
@@ -41,7 +41,7 @@ public class Restaurant {
 	return this.manager;
     }
 
-    public Position getLocation() {
+    public Location getLocation() {
 	return this.location;
     }
 

@@ -14,15 +14,12 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 
-import controllers.Request.BookingRequest;
+import controllers.Request.LocationRequest;
 import controllers.Request.OrderRequest;
-import controllers.Request.PositionRequest;
-import controllers.Response.ErrorResponse;
-import model.Booking;
 import model.Database;
+import model.Location;
 import model.NearbyRestaurants;
 import model.Order;
-import model.Position;
 import model.Restaurant;
 
 public class ApiController {
@@ -34,185 +31,106 @@ public class ApiController {
 	// log every API request
 	before("/*", (req, res) -> logger.info("Client API Request: " + req.uri()));
 
-	// returns a list of available vehicles
+	/*
+	 *
+	 * RETURNS LIST OF RESTAURANTS
+	 *
+	 */
 	get("/restaurants", (req, res) -> {
 	    res.type("application/json");
 
-	    Database db = new Database();
-	    List<Restaurant> restaurants = db.getRestaurants();
-	    db.close();
+	    Database database = new Database();
+	    List<Restaurant> restaurants = database.getRestaurants();
+	    database.close();
 
-	    logger.info("Found " + restaurants.size() + " restaurants");
 	    return new Gson().toJson(restaurants);
 	});
 
-	// returns a list of nearby vehicles, giving their distance to the
-	// client
+	/*
+	 *
+	 * GRABS NEARBY RESTAURANTS
+	 *
+	 */
+
 	post("/restaurants/nearby", (req, res) -> {
 	    res.type("application/json");
-	    Position pos;
+	    Location pos;
 	    try {
-		// use the posted position to create a Position object
-		PositionRequest pr = new Gson().fromJson(req.body(), PositionRequest.class);
-		pos = new Position(pr.lat, pr.lng);
+
+		LocationRequest pr = new Gson().fromJson(req.body(), LocationRequest.class);
+		pos = new Location(pr.lat, pr.lng);
 	    } catch (JsonParseException e) {
-		logger.error(e.getMessage());
-		res.status(400);
-		return new Gson().toJson(new ErrorResponse("Error parsing request"));
+		return new Gson().toJson(new Error("Parsing Error"));
 	    }
-	    logger.info("Getting vehicles near " + pos);
 
-	    Database db = new Database();
-	    List<NearbyRestaurants> nearby = db.getNearbyRestaurants(pos);
-	    db.close();
+	    Database database = new Database();
+	    List<NearbyRestaurants> nearby = database.getNearbyRestaurants(pos);
+	    database.close();
 
-	    logger.info("Found " + nearby.size() + " nearby vehicles");
 	    return new Gson().toJson(nearby);
 	});
 
-	// create a booking
-	post("/bookings", (req, res) -> {
-	    res.type("application/json");
-
-	    String clientId = req.session().attribute("clientId");
-
-	    // return unauthorized response if user not logged in
-	    if (clientId == null) {
-		res.status(401);
-		return new Gson().toJson(new ErrorResponse("Please log in"));
-	    }
-
-	    BookingRequest br;
-	    LocalDateTime dateTime;
-
-	    try {
-		br = new Gson().fromJson(req.body(), BookingRequest.class);
-
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		dateTime = LocalDateTime.parse(br.timestamp, formatter);
-	    } catch (JsonParseException e) {
-		logger.error(e.getMessage());
-		res.status(400);
-		return new Gson().toJson(new ErrorResponse("Error parsing request"));
-	    }
-
-	    logger.info("Inserting a booking!");
-	    Database db = new Database();
-
-	    boolean isBooked = db.isCarBooked(dateTime, br.registration);
-	    if (isBooked == false) {
-
-		int status = db.checkVehicleStatus(br.registration);
-
-		if (status == 0) {
-		    Booking booking = db.createBooking(dateTime, br.registration, clientId, br.duration);
-
-		    db.close();
-		    if (booking != null) {
-			res.type("application/json");
-			return new Gson().toJson(booking);
-		    } else {
-			res.status(400);
-			return new Gson().toJson(new ErrorResponse("Bad Request"));
-		    }
-		} else {
-		    db.close();
-		    res.status(400);
-		    return new Gson().toJson(new ErrorResponse("Bad Request"));
-		}
-
-	    } else {
-		db.close();
-		res.status(400);
-		return new Gson().toJson(new ErrorResponse("Bad Request"));
-	    }
-	});
-
-	// create a booking
+	/*
+	 *
+	 * CREATES AN ORDER FOR THE USER RETURNS NULL FOR ERROR CHECKING
+	 */
 	post("/orders", (req, res) -> {
 	    res.type("application/json");
 
+	    Order order = null;
+	    OrderRequest oreq;
+	    LocalDateTime curTime;
+
 	    String clientId = req.session().attribute("clientId");
 
 	    // return unauthorized response if user not logged in
 	    if (clientId == null) {
-		res.status(401);
-		return new Gson().toJson(new ErrorResponse("Please log in"));
-	    }
 
-	    OrderRequest oreq;
-	    LocalDateTime curTime;
-	    Order order = null;
+		return new Gson().toJson(new Error("Not Logged In"));
+	    }
 
 	    try {
 		oreq = new Gson().fromJson(req.body(), OrderRequest.class);
 
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		curTime = LocalDateTime.parse(oreq.timestamp, formatter);
+		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		curTime = LocalDateTime.parse(oreq.timestamp, dateFormat);
 	    } catch (JsonParseException e) {
-		logger.error(e.getMessage());
-		res.status(400);
-		return new Gson().toJson(new ErrorResponse("Error parsing request"));
+
+		return new Gson().toJson(new Error("Error parsing request"));
 	    }
 
-	    logger.info("Creating an order!");
-	    Database db = new Database();
-	    if (!db.hasDoubleOrder(curTime, clientId)) {
-		order = db.createOrder(curTime, oreq.store_id, clientId, oreq.duration, oreq.item);
+	    Database database = new Database();
+	    if (!database.hasDoubleOrder(curTime, clientId)) {
+		order = database.createOrder(curTime, oreq.store_id, clientId, oreq.duration, oreq.item);
 	    }
 
-	    db.close();
+	    database.close();
 	    if (order != null) {
 		res.type("application/json");
 		return new Gson().toJson(order);
 	    } else {
-		res.status(400);
-		return new Gson().toJson(new ErrorResponse("Bad Request"));
+		return new Gson().toJson(new Error("Error"));
 	    }
 
 	});
 
-	// returns a list of the logged in client's bookings
-	get("/bookings", (req, res) -> {
-	    res.type("application/json");
-	    String clientId = req.session().attribute("clientId");
-
-	    // return unauthorized response if user not logged in
-	    if (clientId == null) {
-		res.status(401);
-		return new Gson().toJson(new ErrorResponse("Please log in"));
-	    }
-
-	    Database db = new Database();
-	    List<Booking> bookings = db.getBookingsOfUser(clientId);
-	    db.close();
-
-	    logger.info("Found " + bookings.size() + " bookings of user " + clientId);
-
-	    if (bookings.size() > 0) {
-		res.type("application/json");
-		return new Gson().toJson(bookings);
-	    } else {
-		// send "no-content" status
-		res.status(204);
-		return "";
-	    }
-	});
-
-	// returns a list of the logged in client's bookings
+	/*
+	 *
+	 * GETS BOOKINGS FOR ALL USERS , to show in "Account" for past bookings RETURNS
+	 * NULL FOR ERROR CHECKING
+	 */
 	get("/orders", (req, res) -> {
 	    res.type("application/json");
 	    String clientId = req.session().attribute("clientId");
 
 	    // return unauthorized response if user not logged in
 	    if (clientId == null) {
-		res.status(401);
-		return new Gson().toJson(new ErrorResponse("Please log in"));
+		return new Gson().toJson(new Error("Not Logged In"));
 	    }
 
-	    Database db = new Database();
-	    List<Order> orders = db.getOrdersOfUser(clientId);
-	    db.close();
+	    Database database = new Database();
+	    List<Order> orders = database.getOrdersOfUser(clientId);
+	    database.close();
 
 	    logger.info("Found " + orders.size() + " bookings of user " + clientId);
 
@@ -220,90 +138,42 @@ public class ApiController {
 		res.type("application/json");
 		return new Gson().toJson(orders);
 	    } else {
-		// send "no-content" status
-		res.status(204);
 		return "";
 	    }
 	});
 
-	get("/bookings/now", (req, res) -> {
-	    String clientId = req.session().attribute("clientId");
-
-	    // return unauthorized response if user not logged in
-	    if (clientId == null) {
-		res.status(401);
-		return new Gson().toJson(new ErrorResponse("Please log in"));
-	    }
-
-	    Booking br;
-	    Database db = new Database();
-
-	    br = db.getBookingNow(clientId);
-	    db.close();
-
-	    if (br != null) {
-		res.type("application/json");
-		return new Gson().toJson(br);
-	    } else {
-		// send "no-content" status
-		res.status(204);
-		return "";
-	    }
-	});
-
+	/*
+	 *
+	 * GETS THE CURRENT ORDER FOR THE USER
+	 *
+	 */
 	get("/orders/now", (req, res) -> {
 	    String clientId = req.session().attribute("clientId");
 
-	    // return unauthorized response if user not logged in
 	    if (clientId == null) {
-		res.status(401);
-		return new Gson().toJson(new ErrorResponse("Please log in"));
+
+		return new Gson().toJson(new Error("Not Logged In"));
 	    }
 
 	    Order or;
-	    Database db = new Database();
+	    Database database = new Database();
 
-	    or = db.getOrderNow(clientId);
-	    db.close();
+	    or = database.getOrderNow(clientId);
+	    database.close();
 
 	    if (or != null) {
 		res.type("application/json");
 		return new Gson().toJson(or);
 	    } else {
-		// send "no-content" status
-		res.status(204);
+
 		return "";
 	    }
 	});
 
-	// end the booking.
-	get("/bookings/end", (req, res) -> {
-	    res.type("application/json");
-	    Booking br;
-
-	    String clientId = req.session().attribute("clientId");
-	    logger.info("Ending current booking of: " + clientId);
-
-	    // return unauthorized response if user not logged in
-	    if (clientId == null) {
-		res.status(401);
-		return new Gson().toJson(new ErrorResponse("Please log in"));
-	    }
-
-	    Database db = new Database();
-	    br = db.endBooking(clientId);
-
-	    if (br != null) {
-		res.type("application/json");
-		return new Gson().toJson(br);
-	    } else {
-		// send "no-content" status
-		res.status(204);
-		return "";
-	    }
-
-	});
-
+	/*
+	 *
+	 * ALLOWS USER TO END THE RODER RETURNS NULL FOR ERROR CHECKING
+	 */
 	get("/orders/end", (req, res) -> {
 	    res.type("application/json");
 	    Order or;
@@ -311,14 +181,12 @@ public class ApiController {
 	    String clientId = req.session().attribute("clientId");
 	    logger.info("Ending current booking of: " + clientId);
 
-	    // return unauthorized response if user not logged in
 	    if (clientId == null) {
-		res.status(401);
-		return new Gson().toJson(new ErrorResponse("Please log in"));
+		return new Gson().toJson(new Error("Not Logged In"));
 	    }
 
-	    Database db = new Database();
-	    db.endOrder(clientId);
+	    Database database = new Database();
+	    database.endOrder(clientId);
 	    return "";
 	});
 

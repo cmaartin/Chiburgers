@@ -2,17 +2,17 @@ package controllers;
 
 import java.util.List;
 
-import model.Position;
+import model.Location;
 
 class Response {
 
     private Response() {
     }
 
-    static class ErrorResponse {
+    static class Error {
 	String message;
 
-	ErrorResponse(String message) {
+	Error(String message) {
 	    this.message = message;
 	}
     }
@@ -26,9 +26,9 @@ class Response {
     }
 
     static class RouteResponse {
-	List<Position> route;
+	List<Location> route;
 
-	public RouteResponse(List<Position> route) {
+	public RouteResponse(List<Location> route) {
 	    this.route = route;
 	}
     }
