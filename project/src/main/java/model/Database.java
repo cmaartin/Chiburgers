@@ -31,9 +31,9 @@ public class Database implements Closeable {
 
     /**
      * Create a database object with an underlying {@link java.sql.Connection}
-     * object. This constructor will return a connection to the local development
-     * database when run locally, or a connection to the Cloud SQL database when
-     * deployed.
+     * object. This constructor will return a connection to the local
+     * development database when run locally, or a connection to the Cloud SQL
+     * database when deployed.
      *
      * @throws SQLException
      */
@@ -98,22 +98,12 @@ public class Database implements Closeable {
 		+ "`item` VARCHAR(50) NOT NULL, " + "PRIMARY KEY (`id`), "
 		+ "FOREIGN KEY (`store_id`) REFERENCES `restaurants`(`store_id`))";
 
-	String bookingsSql = "CREATE TABLE IF NOT EXISTS `bookings` (" + "`id` INT NOT NULL AUTO_INCREMENT, "
-		+ "`timestamp` DATETIME NOT NULL, " + "`registration` VARCHAR(10) NOT NULL, "
-		+ "`customer_id` VARCHAR(50) NOT NULL, " + "`duration` SMALLINT UNSIGNED NOT NULL, "
-		+ "PRIMARY KEY (`id`), " + "FOREIGN KEY (`registration`) REFERENCES `vehicles`(`registration`))";
-
-	String locationSql = "CREATE TABLE IF NOT EXISTS `locations` (`registration` VARCHAR(10) NOT NULL, "
-		+ "timestamp DATETIME NOT NULL, location POINT NOT NULL)";
-
 	String users = "CREATE TABLE IF NOT EXISTS `users` (`cid` VARCHAR(50) NOT NULL, "
 		+ "`email` VARCHAR(50) NOT NULL, " + "PRIMARY KEY (`cid`))";
 
 	Statement stmt = this.conn.createStatement();
 	stmt.execute(restaurantsSql);
 	stmt.execute(ordersSql);
-	stmt.execute(bookingsSql);
-	stmt.execute(locationSql);
 	stmt.execute(users);
 
 	stmt.close();
@@ -1246,8 +1236,8 @@ public class Database implements Closeable {
     }
 
     /**
-     * Sets the rates in the database according to the passed in map. This method
-     * doesn't support adding/removing rates.
+     * Sets the rates in the database according to the passed in map. This
+     * method doesn't support adding/removing rates.
      *
      * @return {@code true} on success
      */
