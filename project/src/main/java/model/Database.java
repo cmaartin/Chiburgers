@@ -590,6 +590,38 @@ public class Database implements Closeable {
 	return false; // Not double Booked.
     }
 
+    public boolean hasDoubleOrder(LocalDateTime currtime, String cust_id) {
+	logger.info("Has " + cust_id + "double ordered.");
+	try {
+	    // Gets the latest timestamp of a car booking.
+	    String query = "SELECT timestamp,duration FROM orders WHERE customer_id = ? " + "ORDER BY id DESC LIMIT 1";
+	    PreparedStatement ps = this.conn.prepareStatement(query);
+
+	    ps.setString(1, cust_id);
+
+	    ResultSet rs = ps.executeQuery();
+
+	    if (rs.next()) {
+		// Gets when the car is going to end.
+		LocalDateTime orderTime = rs.getTimestamp("timestamp").toLocalDateTime();
+		LocalDateTime endOrder = orderTime.plusMinutes(rs.getInt(2));
+
+		if (currtime.isBefore(endOrder) || currtime.isEqual(endOrder)) {
+		    logger.info("[Server] Error: " + cust_id + " has an order in place.");
+		    rs.close();
+		    ps.close();
+		    return true; // It is double booked.
+		}
+
+	    }
+	} catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+
+	return false; // Not double Booked.
+    }
+
     public Boolean changeVehicleStatus(String registration, int status) {
 	try {
 	    String query = "UPDATE vehicles set status = ? WHERE registration = ?";
@@ -827,9 +859,9 @@ public class Database implements Closeable {
     }
 
     public Order getOrderNow(String clientId) throws SQLException {
-	String query = "SELECT ord.id, ord.timestamp, ord.store_id, ord.customer_id, ord.duration, rst.store_id, rst.store_name, rst.manager, rst.phone "
+	String query = "SELECT ord.id, ord.timestamp, ord.customer_id, ord.duration, rst.store_id, rst.store_name, rst.manager, rst.phone "
 		+ "FROM orders as ord left join restaurants as rst on ord.store_id = rst.store_id "
-		+ "WHERE customer_id like ? and date_add(`timestamp`, interval `duration` minute) > now() limit 1;";
+		+ "WHERE customer_id like ? and date_add(`timestamp`, interval `duration` minute) > now() ORDER BY ord.id limit 1;";
 
 	PreparedStatement ps = this.conn.prepareStatement(query);
 

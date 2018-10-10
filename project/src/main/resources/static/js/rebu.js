@@ -116,7 +116,7 @@ rebu = (function() {
 				if (res.status == 200) {
 					res.json()
 					.then(booking => {
-						addVehicleDescription(booking.vehicle);
+						addVehicleDescription(booking.restaurant);
 						console.log(booking);
 						callback(booking);
 					})

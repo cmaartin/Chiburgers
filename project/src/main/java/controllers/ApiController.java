@@ -142,13 +142,14 @@ public class ApiController {
 	    }
 
 	    OrderRequest oreq;
-	    LocalDateTime dateTime;
+	    LocalDateTime curTime;
+	    Order order = null;
 
 	    try {
 		oreq = new Gson().fromJson(req.body(), OrderRequest.class);
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		dateTime = LocalDateTime.parse(oreq.timestamp, formatter);
+		curTime = LocalDateTime.parse(oreq.timestamp, formatter);
 	    } catch (JsonParseException e) {
 		logger.error(e.getMessage());
 		res.status(400);
@@ -157,8 +158,9 @@ public class ApiController {
 
 	    logger.info("Creating an order!");
 	    Database db = new Database();
-
-	    Order order = db.createOrder(dateTime, oreq.store_id, clientId, oreq.duration);
+	    if (!db.hasDoubleOrder(curTime, clientId)) {
+		order = db.createOrder(curTime, oreq.store_id, clientId, oreq.duration);
+	    }
 
 	    db.close();
 	    if (order != null) {

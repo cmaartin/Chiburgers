@@ -241,7 +241,7 @@ var view = (function() {
 		currentBookingInfo: function(booking) {
 			var container = document.createElement("div");
 			var bookingInfo = this.bookingInfo(booking);
-			var vehicleInfo = this.vehicleInfo(booking.vehicle);
+			var vehicleInfo = this.vehicleInfo(booking.restaurant);
 			
 			container.appendChild(vehicleInfo);
 			container.appendChild(bookingInfo);
@@ -323,6 +323,37 @@ var view = (function() {
 			for (var i = 0; i < buttons.length; i++) {
 				container.appendChild(buttons[i]);
 			}
+			
+			
+			return container;
+		},
+		
+		payment: function(booking) {
+			var container = document.createElement("div");
+			
+			var description = document.createElement("p");
+			description.innerText = "Pay for your booking using the button below.";
+			
+			var paypalButton = document.createElement("div");
+			paypalButton.id = "paypal-button-container";
+			
+			container.appendChild(description);
+			container.appendChild(paypalButton);
+			
+			return container;
+		},
+		
+		paymentConfirmation(success) {
+			var container = document.createElement("div");
+			
+			var description = document.createElement("p");
+			if (success) {
+				description.innerText = "Payment successful!";
+			} else {
+				description.innerText = "Payment failed. Please contact an administrator.";
+			}
+			
+			container.appendChild(description);
 			
 			return container;
 		}

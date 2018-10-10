@@ -247,27 +247,95 @@ function submitBooking(vehicle) {
 		var store_id = document.getElementById("store_id").value;
 		
 		var orderRequest = {
-			store_id: store_id,
-			duration: duration,
-			client: googleUser.getBasicProfile().getEmail()
-		};
-		
-		rebu.requestBooking(orderRequest, function(succeeded) {
-			if (succeeded) {
-				// show the confirmation screen
-				var vehicleInfo = view.vehicleInfo(vehicle);
-				sidepane.clear();
-				sidepane.appendHeader("BOOK YOUR CAR");
-				sidepane.append(vehicleInfo);
-				sidepane.append(view.bookingConfirmed());
-				// refresh the map
-				rebu.getVehicles(displayVehicles);
-				// show booking marker & card
-				displayCurrentBooking()
-			} else {
-				alert("Booking failed");
-			}
+				store_id: store_id,
+				duration: duration,
+				client: googleUser.getBasicProfile().getEmail()
+			};
+			
+	    	rebu.requestBooking(orderRequest, function(succeeded) {
+				if (succeeded) {
+					// show the confirmation screen
+					var vehicleInfo = view.vehicleInfo(vehicle);
+					sidepane.clear();
+					sidepane.appendHeader("BOOK YOUR CAR");
+					sidepane.append(vehicleInfo);
+					sidepane.append(view.bookingConfirmed());
+					//sidepane.clear();
+					//sidepane.appendHeader("PAYMENT");
+					sidepane.append(view.payment(null));
+					// render paypal button
+					// refresh the map
+					paypal.Button.render({
+
+				        // Set your environment
+
+				        env: 'sandbox', // sandbox | production
+
+				        // Specify the style of the button
+
+				        style: {
+				            label: 'checkout',
+				            size:  'small',    // small | medium | large | responsive
+				            shape: 'pill',     // pill | rect
+				            color: 'gold'      // gold | blue | silver | black
+				        },
+
+				        // PayPal Client IDs - replace with your own
+				        // Create a PayPal app: https://developer.paypal.com/developer/applications/create
+
+				        client: {
+				            sandbox:    'AcsIzgLyjCG77N2aONf-J33hG74Mav83qnYtGU1FWAL4dtgwXmON2XQ_Xu2QJWvKPxPwZB8Di7UhMnHb',
+				            production: '<insert production client id>'
+				        },
+
+				        payment: function(data, actions) {
+				            return actions.payment.create({
+				                payment: {
+				                    transactions: [
+				                        {
+				                            amount: { total: '0.01', currency: 'AUD' }
+				                        }
+				                    ]
+				                }
+				            });
+				        },
+
+				        onAuthorize: function(data, actions) {
+					        return actions.payment.execute().then(function() {
+						    	sidepane.clear();
+						    	sidepane.appendHeader("PAYMENT");
+						    	sidepane.append(view.paymentConfirmation(true));
+						    	var message = document.createElement("p");
+						    	message.innerText = "Make sure that you pick up your burger at the chosen restaurant.";
+						    	sidepane.append(message);
+						    	
+						    	rebu.getVehicles(displayVehicles);
+								// show booking marker & card
+								
+								displayCurrentBooking()
+
+								
+					        });
+					    },
+					    onError: function(err) {
+					    	sidepane.clear();
+					    	sidepane.appendHeader("PAYMENT");
+					    	sidepane.append(view.paymentConfirmation(false));
+					    }
+
+				    }, '#paypal-button-container');
+					sidepane.open();
+					
+				} else {
+					alert("Booking failed");
+				}
 		});
+	    	
+		
+		
+		
+		
+
 	} else {
 		showLoginHint();
 	}
@@ -298,9 +366,9 @@ function findBookedVehicle(booking) {
 		map.panTo(bookedVehicle.marker.getPosition());
 	}
 	// open a google maps link navigating to the vehicle
-	var pos = bookedVehicle.marker.getPosition();
-	var link = "https://maps.google.com/maps?daddr=" + pos.lat() + "," + pos.lng();
-	var win = window.open(link, '_blank');
+	//var pos = bookedVehicle.marker.getPosition();
+	//var link = "https://maps.google.com/maps?daddr=" + pos.lat() + "," + pos.lng();
+	//var win = window.open(link, '_blank');
 	win.focus();
 }
 
@@ -336,7 +404,7 @@ function endBooking(booking) {
 function displayCurrentBooking() {
 	rebu.getCurrentBooking(function(booking) {
 		// create vehicle marker
-		bookedVehicle = booking.vehicle;
+		bookedVehicle = booking.restaurant;
 		bookedVehicle.marker = createVehicleMarker(bookedVehicle, map, true);
 		
 		// display the card
@@ -392,3 +460,62 @@ document.addEventListener('keyup', function(e) {
 		hideLoginHint();
 	}
 });
+
+
+function paypalPrompt(booking) {
+	sidepane.clear();
+	sidepane.appendHeader("PAYMENT");
+	sidepane.append(view.payment(booking));
+	// render paypal button
+	
+	paypal.Button.render({
+
+        // Set your environment
+
+        env: 'sandbox', // sandbox | production
+
+        // Specify the style of the button
+
+        style: {
+            label: 'checkout',
+            size:  'small',    // small | medium | large | responsive
+            shape: 'pill',     // pill | rect
+            color: 'gold'      // gold | blue | silver | black
+        },
+
+        // PayPal Client IDs - replace with your own
+        // Create a PayPal app: https://developer.paypal.com/developer/applications/create
+
+        client: {
+            sandbox:    'AcsIzgLyjCG77N2aONf-J33hG74Mav83qnYtGU1FWAL4dtgwXmON2XQ_Xu2QJWvKPxPwZB8Di7UhMnHb',
+            production: '<insert production client id>'
+        },
+
+        payment: function(data, actions) {
+            return actions.payment.create({
+                payment: {
+                    transactions: [
+                        {
+                            amount: { total: '0.01', currency: 'AUD' }
+                        }
+                    ]
+                }
+            });
+        },
+
+        onAuthorize: function(data, actions) {
+	        return actions.payment.execute().then(function() {
+		    	sidepane.clear();
+		    	sidepane.appendHeader("PAYMENT");
+		    	sidepane.append(view.paymentConfirmation(true));
+	        });
+	    },
+	    onError: function(err) {
+	    	sidepane.clear();
+	    	sidepane.appendHeader("PAYMENT");
+	    	sidepane.append(view.paymentConfirmation(false));
+	    }
+
+    }, '#paypal-button-container');
+	sidepane.open();
+}
