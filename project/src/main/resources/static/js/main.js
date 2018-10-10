@@ -259,7 +259,7 @@ function submitBooking(vehicle) {
 					
 					sidepane.appendHeader("Location: ");
 					sidepane.append(vehicleInfo);
-					sidepane.append(view.bookingConfirmed());
+					
 					//sidepane.clear();
 					//sidepane.appendHeader("PAYMENT");
 					sidepane.append(view.payment(null));
@@ -313,11 +313,11 @@ function submitBooking(vehicle) {
 					        		
 					        		if (succeeded) {
 					        			sidepane.clear();
+					        			
 								    	sidepane.appendHeader("PAYMENT");
+								    	
 								    	sidepane.append(view.paymentConfirmation(true));
-								    	var message = document.createElement("p");
-								    	message.innerText = "Make sure that you pick up your burger at the chosen restaurant.";
-								    	sidepane.append(message);
+								    	sidepane.append(view.bookingConfirmed());
 								    	
 								    	rebu.getVehicles(displayVehicles);
 										// show booking marker & card
