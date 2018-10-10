@@ -75,7 +75,7 @@ rebu = (function() {
 			    store_id: orderRequest.store_id,
 			    customerId: orderRequest.client,
 			    duration: orderRequest.duration,
-			    item: item
+			    item: orderRequest.item
 			}
 			
 			booking = JSON.stringify(booking);
