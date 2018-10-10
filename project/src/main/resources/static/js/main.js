@@ -406,7 +406,7 @@ function displayCurrentBooking() {
 		bookedVehicle.marker = createVehicleMarker(bookedVehicle, map, true);
 		
 		// display the card
-		var currentBookingCard = view.currentBookingCard(booking, findBookedVehicle, extendBooking, endBooking);
+		var currentBookingCard = view.currentBookingCard(booking, findBookedVehicle, endBooking);
 			
 		// fancy transition
 		currentBookingCard.className = "transition-start";

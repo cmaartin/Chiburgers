@@ -221,20 +221,14 @@ var view = (function() {
 		
 		previousBooking: function(booking) {
 			var container = document.createElement("div");
-			var vehicleInfo = this.vehicleInfo(booking.vehicle);
+			var vehicleInfo = this.vehicleInfo(booking.restaurant);
 			var date = document.createElement("p");
-			var cost = document.createElement("p");
 			
 			// create date string
-			
 			date.innerText = this.jsonDateToString(booking.timestamp);
-			cost.innerText = "$" + booking.cost.toFixed(2);
-			cost.className = "cost";
 			
 			container.appendChild(vehicleInfo);
 			container.appendChild(date);
-			container.appendChild(cost);
-			
 			return container;
 		},
 		
@@ -278,11 +272,11 @@ var view = (function() {
 			return buttons;
 		},
 		
-		currentBooking: function(booking, findCallback, extendCallback, endCallBack) {
+		currentBooking: function(booking, findCallback, endCallBack) {
 			var container = document.createElement("div");
 			
 			var info = this.currentBookingInfo(booking);
-			var buttons = this.currentBookingButtons(booking, findCallback, extendCallback, endCallBack);
+			var buttons = this.currentBookingButtons(booking, findCallback, endCallBack);
 			
 			// todo: find button doesn't work without the map, so remove it
 			buttons.shift();
@@ -298,13 +292,13 @@ var view = (function() {
 			return container;
 		},
 		
-		currentBookingCard: function(booking, findCallback, extendCallback, endCallBack) {
+		currentBookingCard: function(booking, findCallback, endCallBack) {
 			var container = document.createElement("div");
 			container.id = "current-booking";
 			
 			var header = document.createElement("h3");
 			var info = this.currentBookingInfo(booking);
-			var buttons = this.currentBookingButtons(booking, findCallback, extendCallback, endCallBack);
+			var buttons = this.currentBookingButtons(booking, findCallback, endCallBack);
 			
 			header.innerText = "CURRENT BOOKING";
 			
