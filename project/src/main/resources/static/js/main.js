@@ -7,8 +7,6 @@ var mapVehicles = [];
 var bookedVehicle = null;
 
 var urlAvail = '/img/hamburger.png';
-var urlUnavail = '/img/vehicle-pin-unavailable.png';
-var urlBooked = '/img/vehicle-pin-booked.png';
 
 // keep track of the currently open info window
 var currentInfoWindow = null;
@@ -188,7 +186,7 @@ function createVehicleMarker(vehicle, map, booked = false) {
 		position: vehicle.location,
 		map: map,
 		icon: {
-			url: booked ? urlBooked : (urlAvail),
+			url: urlAvail,
 			size: new google.maps.Size(40, 40),
 			origin: new google.maps.Point(0, 0),
 			anchor: new google.maps.Point(20, 40)
