@@ -101,7 +101,7 @@ rebu = (function() {
 		
 		getBookings: function(user, callback) {
 			console.log("[api] getting bookings for " + user);
-			var request = new Request('/api/bookings?id=' + user);
+			var request = new Request('/api/orders?id=' + user);
 			fetch(request)
 			.then(res => res.json())
 			.then(json => {

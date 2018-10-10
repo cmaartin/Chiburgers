@@ -299,6 +299,42 @@ public class Database implements Closeable {
 	}
     }
 
+    public List<Order> getOrdersOfUser(String clientId) {
+	logger.info("Get Orders for " + clientId);
+	List<Order> orders = new ArrayList<Order>();
+
+	try {
+	    String sql = "SELECT od.duration, od.id, od.timestamp, od.customer_id, od.store_id, od.item, rt.store_id, rt.store_name, rt.manager, rt.phone "
+		    + "FROM orders as od LEFT JOIN restaurants as rt ON od.store_id=rt.store_id "
+		    + "WHERE od.customer_id = ? " + "ORDER by timestamp DESC";
+	    PreparedStatement stmt = this.conn.prepareStatement(sql);
+	    stmt.setString(1, clientId);
+	    ResultSet rs = stmt.executeQuery();
+	    while (rs.next()) {
+		int id = rs.getInt("id");
+		LocalDateTime timestamp = rs.getTimestamp("timestamp").toLocalDateTime();
+		String customer_id = rs.getString("customer_id");
+
+		String store_id = rs.getString("store_id");
+		String store_name = rs.getString("store_name");
+		String manager = rs.getString("manager");
+		String phone = rs.getString("phone");
+		int duration = rs.getInt("duration");
+		String item = rs.getString("item");
+		Position location = getRestaurantLocation(store_id);
+
+		Restaurant restaurant = new Restaurant(store_id, store_name, manager, phone, location);
+		Order order = new Order(id, timestamp, restaurant, customer_id, duration, item);
+		orders.add(order);
+	    }
+	    return orders;
+	} catch (SQLException e) {
+	    logger.error(e.getMessage());
+	    // return an empty list in case of an error
+	    return new ArrayList<Order>();
+	}
+    }
+
     /**
      * Gets a booking from the database based on it's ID
      *

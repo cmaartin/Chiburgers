@@ -383,19 +383,6 @@ function findBookedVehicle(booking) {
 	win.focus();
 }
 
-function extendBooking(booking) {
-	// TODO: ask user for extra duration
-	rebu.extendCurrentBooking(60, function(success) {
-		if (success) {
-			alert("Booking has been extended");
-			window.location.reload(); // refresh the page
-			// TODO: update the booking card in place
-		} else {
-			alert("Booking was not extended");
-		}
-	});
-}
-
 function endBooking(booking) {
 	rebu.endCurrentBooking(function(success) {
 		if (success) {
@@ -471,62 +458,3 @@ document.addEventListener('keyup', function(e) {
 		hideLoginHint();
 	}
 });
-
-
-function paypalPrompt(booking) {
-	sidepane.clear();
-	sidepane.appendHeader("PAYMENT");
-	sidepane.append(view.payment(booking));
-	// render paypal button
-	
-	paypal.Button.render({
-
-        // Set your environment
-
-        env: 'sandbox', // sandbox | production
-
-        // Specify the style of the button
-
-        style: {
-            label: 'checkout',
-            size:  'small',    // small | medium | large | responsive
-            shape: 'pill',     // pill | rect
-            color: 'gold'      // gold | blue | silver | black
-        },
-
-        // PayPal Client IDs - replace with your own
-        // Create a PayPal app: https://developer.paypal.com/developer/applications/create
-
-        client: {
-            sandbox:    'AcsIzgLyjCG77N2aONf-J33hG74Mav83qnYtGU1FWAL4dtgwXmON2XQ_Xu2QJWvKPxPwZB8Di7UhMnHb',
-            production: '<insert production client id>'
-        },
-
-        payment: function(data, actions) {
-            return actions.payment.create({
-                payment: {
-                    transactions: [
-                        {
-                            amount: { total: '0.01', currency: 'AUD' }
-                        }
-                    ]
-                }
-            });
-        },
-
-        onAuthorize: function(data, actions) {
-	        return actions.payment.execute().then(function() {
-		    	sidepane.clear();
-		    	sidepane.appendHeader("PAYMENT");
-		    	sidepane.append(view.paymentConfirmation(true));
-	        });
-	    },
-	    onError: function(err) {
-	    	sidepane.clear();
-	    	sidepane.appendHeader("PAYMENT");
-	    	sidepane.append(view.paymentConfirmation(false));
-	    }
-
-    }, '#paypal-button-container');
-	sidepane.open();
-}

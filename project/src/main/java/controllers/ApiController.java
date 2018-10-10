@@ -199,6 +199,33 @@ public class ApiController {
 	    }
 	});
 
+	// returns a list of the logged in client's bookings
+	get("/orders", (req, res) -> {
+	    res.type("application/json");
+	    String clientId = req.session().attribute("clientId");
+
+	    // return unauthorized response if user not logged in
+	    if (clientId == null) {
+		res.status(401);
+		return new Gson().toJson(new ErrorResponse("Please log in"));
+	    }
+
+	    Database db = new Database();
+	    List<Order> orders = db.getOrdersOfUser(clientId);
+	    db.close();
+
+	    logger.info("Found " + orders.size() + " bookings of user " + clientId);
+
+	    if (orders.size() > 0) {
+		res.type("application/json");
+		return new Gson().toJson(orders);
+	    } else {
+		// send "no-content" status
+		res.status(204);
+		return "";
+	    }
+	});
+
 	get("/bookings/now", (req, res) -> {
 	    String clientId = req.session().attribute("clientId");
 
