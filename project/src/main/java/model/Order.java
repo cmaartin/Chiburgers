@@ -9,16 +9,16 @@ public class Order {
     private final Restaurant restaurant;
     private final String customerId;
     private final int duration;
-    private final double cost;
+    private final String item;
 
     protected Order(int id, LocalDateTime timestamp, Restaurant restaurant, String customerId, int duration,
-	    double cost) {
+	    String item) {
 	this.id = id;
 	this.timestamp = timestamp;
 	this.restaurant = restaurant;
 	this.customerId = customerId;
 	this.duration = duration;
-	this.cost = cost;
+	this.item = item;
     }
 
     public int getId() {
@@ -41,8 +41,8 @@ public class Order {
 	return this.duration;
     }
 
-    public double getCost() {
-	return this.cost;
+    public String getItem() {
+	return this.item;
     }
 
 }

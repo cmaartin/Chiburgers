@@ -159,7 +159,7 @@ public class ApiController {
 	    logger.info("Creating an order!");
 	    Database db = new Database();
 	    if (!db.hasDoubleOrder(curTime, clientId)) {
-		order = db.createOrder(curTime, oreq.store_id, clientId, oreq.duration);
+		order = db.createOrder(curTime, oreq.store_id, clientId, oreq.duration, oreq.item);
 	    }
 
 	    db.close();

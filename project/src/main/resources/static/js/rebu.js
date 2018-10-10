@@ -74,7 +74,8 @@ rebu = (function() {
 			    timestamp: view.dateToString(new Date()),
 			    store_id: orderRequest.store_id,
 			    customerId: orderRequest.client,
-			    duration: orderRequest.duration
+			    duration: orderRequest.duration,
+			    item: orderRequest.item
 			}
 			
 			booking = JSON.stringify(booking);
@@ -154,7 +155,7 @@ rebu = (function() {
 		},
 		
 		endCurrentBooking: function(callback) {
-			console.log("[api] ending current booking");
+			console.log("[server] end order");
 			
 			var headers = new Headers();
 			headers.append("Content-Type", "application/json");
