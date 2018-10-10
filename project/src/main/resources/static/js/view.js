@@ -223,12 +223,18 @@ var view = (function() {
 			var container = document.createElement("div");
 			var vehicleInfo = this.vehicleInfo(booking.restaurant);
 			var date = document.createElement("p");
+			var item = document.createElement("p");
 			
 			// create date string
 			date.innerText = this.jsonDateToString(booking.timestamp);
+			item.innerText = booking.item;
+			
+			item.className = "cost";
+			
 			
 			container.appendChild(vehicleInfo);
 			container.appendChild(date);
+			container.appendChild(item);
 			return container;
 		},
 		

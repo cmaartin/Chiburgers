@@ -31,9 +31,9 @@ public class Database implements Closeable {
 
     /**
      * Create a database object with an underlying {@link java.sql.Connection}
-     * object. This constructor will return a connection to the local
-     * development database when run locally, or a connection to the Cloud SQL
-     * database when deployed.
+     * object. This constructor will return a connection to the local development
+     * database when run locally, or a connection to the Cloud SQL database when
+     * deployed.
      *
      * @throws SQLException
      */
@@ -306,7 +306,8 @@ public class Database implements Closeable {
 	try {
 	    String sql = "SELECT od.duration, od.id, od.timestamp, od.customer_id, od.store_id, od.item, rt.store_id, rt.store_name, rt.manager, rt.phone "
 		    + "FROM orders as od LEFT JOIN restaurants as rt ON od.store_id=rt.store_id "
-		    + "WHERE od.customer_id = ? " + "ORDER by timestamp DESC";
+		    + "WHERE od.customer_id = ? AND date_add(od.timestamp, interval od.duration minute) < now() "
+		    + "ORDER by timestamp DESC";
 	    PreparedStatement stmt = this.conn.prepareStatement(sql);
 	    stmt.setString(1, clientId);
 	    ResultSet rs = stmt.executeQuery();
@@ -1272,8 +1273,8 @@ public class Database implements Closeable {
     }
 
     /**
-     * Sets the rates in the database according to the passed in map. This
-     * method doesn't support adding/removing rates.
+     * Sets the rates in the database according to the passed in map. This method
+     * doesn't support adding/removing rates.
      *
      * @return {@code true} on success
      */

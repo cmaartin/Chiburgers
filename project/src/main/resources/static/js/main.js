@@ -377,9 +377,9 @@ function findBookedVehicle(booking) {
 		map.panTo(bookedVehicle.marker.getPosition());
 	}
 	// open a google maps link navigating to the vehicle
-	//var pos = bookedVehicle.marker.getPosition();
-	//var link = "https://maps.google.com/maps?daddr=" + pos.lat() + "," + pos.lng();
-	//var win = window.open(link, '_blank');
+	var pos = bookedVehicle.marker.getPosition();
+	var link = "https://maps.google.com/maps?daddr=" + pos.lat() + "," + pos.lng();
+	var win = window.open(link, '_blank');
 	win.focus();
 }
 
