@@ -55,12 +55,10 @@ public class UiController {
 			s.attribute("clientId", payload.getSubject());
 			s.attribute("clientEmail", payload.getEmail());
 			s.attribute("clientName", payload.get("name"));
-			s.attribute("isAdmin", db.isAdmin(payload.getSubject()));
 
 			logger.info(String.format("Client logged in: %s (%s)", s.attribute("clientName"),
 				s.attribute("clientEmail")));
 			logger.info("Client ID: " + s.attribute("clientId"));
-			logger.info("Client is " + ((boolean) s.attribute("isAdmin") ? "" : "not ") + "an admin");
 
 			String cid = s.attribute("clientId");
 			String email = s.attribute("clientEmail");
