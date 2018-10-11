@@ -1,8 +1,8 @@
 document.addEventListener("login", function() {
 	//get current booking
-	rebu.getCurrentBooking(function(orders) {
+	rebu.getCurrentOrder(function(orders) {
 		var currentDiv = document.getElementById("cur-orders");
-		currentDiv.appendChild(view.currentOrders(orders, findBookedVehicle, endOrder));
+		currentDiv.appendChild(view.currentOrders(orders, findBookedRestaurant, endOrder));
 		
 	});
 	// get past bookings
