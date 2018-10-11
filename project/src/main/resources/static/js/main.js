@@ -383,7 +383,7 @@ function findBookedVehicle(booking) {
 	win.focus();
 }
 
-function endBooking(booking) {
+function endOrder(booking) {
 	rebu.endCurrentBooking(function(success) {
 		if (success) {
 			if (map != null) {
@@ -400,20 +400,20 @@ function endBooking(booking) {
 
 // Queries for the user's current booking & displays it as a card
 function displayCurrentBooking() {
-	rebu.getCurrentBooking(function(booking) {
+	rebu.getCurrentBooking(function(order) {
 		// create vehicle marker
-		bookedVehicle = booking.restaurant;
-		bookedVehicle.marker = createVehicleMarker(bookedVehicle, map, true);
+		bookedRestaurant = order.restaurant;
+		bookedRestaurant.marker = createVehicleMarker(bookedRestaurant, map, true);
 		
 		// display the card
-		var currentBookingCard = view.currentBookingCard(booking, findBookedVehicle, endBooking);
+		var currentOrderCard = view.currentOrderCard(order, findBookedVehicle, endOrder);
 			
 		// fancy transition
-		currentBookingCard.className = "transition-start";
+		currentOrderCard.className = "transition-start";
 		setTimeout(function() {
-			currentBookingCard.className = "";
+			currentOrderCard.className = "";
 		}, 200);
-		document.body.appendChild(currentBookingCard);
+		document.body.appendChild(currentOrderCard);
 	});
 }
 

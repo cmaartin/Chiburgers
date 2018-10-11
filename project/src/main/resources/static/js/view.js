@@ -60,16 +60,16 @@ var view = (function() {
 				d.time.hour + ":" + zeroPad(d.time.minute)
 		},
 		
-		vehicleInfo: function(vehicle) {
+		restaurantInfo: function(restaurant) {
 			var container = document.createElement("div");
 			var desc = document.createElement("h3");
 			var manager = document.createElement("p");
 			var phone = document.createElement("p");
 			
-			container.className = "vehicle-info";
-			desc.innerText = vehicle.description;
-			manager.innerText = "Manager: " + vehicle.manager;
-			phone.innerText = "Phone: " + vehicle.phone;
+			container.className = "restaurant-info";
+			desc.innerText = restaurant.description;
+			manager.innerText = "Manager: " + restaurant.manager;
+			phone.innerText = "Phone: " + restaurant.phone;
 			
 			
 			container.appendChild(desc);
@@ -79,23 +79,23 @@ var view = (function() {
 			return container;
 		},
 		
-		bookingInfo: function(booking) {
+		ordersInfo: function(orders) {
 			var container = document.createElement("div");
 			var remaining = document.createElement("h3");
 			var end = document.createElement("p");
 			
-			container.className = "booking-info";
+			container.className = "orders-info";
 			
 			var currentDate = new Date();
-			var startDate = jsonToDate(booking.timestamp);
-			var endDate = addMinutes(startDate, booking.duration);
+			var startDate = jsonToDate(orders.timestamp);
+			var endDate = addMinutes(startDate, orders.duration);
 			
 			var remainingTime = difference(endDate, currentDate)
 			var endTime = timeToString(endDate);
 						
-			container.className = "booking-info";
+			container.className = "orders-info";
 			remaining.innerText = "" + remainingTime + " Remaining";
-			end.innerText = "Booked until " + endTime;
+			end.innerText = "Ordered until " + endTime;
 			
 			container.appendChild(remaining);
 			container.appendChild(end);
@@ -219,17 +219,17 @@ var view = (function() {
 			return infoContents;
 		},
 		
-		previousBooking: function(booking) {
+		previousOrder: function(order) {
 			var container = document.createElement("div");
-			var vehicleInfo = this.vehicleInfo(booking.restaurant);
+			var vehicleInfo = this.restaurantInfo(order.restaurant);
 			var date = document.createElement("p");
 			var item = document.createElement("p");
 			
 			// create date string
-			date.innerText = this.jsonDateToString(booking.timestamp);
-			item.innerText = booking.item;
+			date.innerText = this.jsonDateToString(order.timestamp);
+			item.innerText = order.item;
 			
-			item.className = "cost";
+			item.className = "item";
 			
 			
 			container.appendChild(vehicleInfo);
@@ -238,51 +238,51 @@ var view = (function() {
 			return container;
 		},
 		
-		currentBookingInfo: function(booking) {
+		currentOrderInfo: function(orders) {
 			var container = document.createElement("div");
-			var bookingInfo = this.bookingInfo(booking);
-			var vehicleInfo = this.vehicleInfo(booking.restaurant);
+			var ordersInfo = this.ordersInfo(orders);
+			var restaurantInfo = this.restaurantInfo(orders.restaurant);
 			
-			container.appendChild(vehicleInfo);
-			container.appendChild(bookingInfo);
+			container.appendChild(ordersInfo);
+			container.appendChild(restaurantInfo);
 			
 			return container;
 		},
 		
-		currentBookingButtons: function(booking, findCallback, endCallback) {
+		currentOrderButtons: function(orders, findCallback, endCallback) {
 			var buttons = new Array();
 			
-			var findVehicleButton = document.createElement("button");
-			var endBookingButton = document.createElement("button");
+			var findRestaurantButton = document.createElement("button");
+			var endOrderButton = document.createElement("button");
 			
-			findVehicleButton.addEventListener("click", function(e) {
+			findRestaurantButton.addEventListener("click", function(e) {
 				e.preventDefault();
-				findCallback(booking);
+				findCallback(orders);
 			});
-			endBookingButton.addEventListener("click", function(e) {
+			endOrderButton.addEventListener("click", function(e) {
 				e.preventDefault();
-				endCallback(booking);
+				endCallback(orders);
 			});
 			
-			findVehicleButton.className = "confirm";
-			endBookingButton.className = "confirm";
+			findRestaurantButton.className = "confirm";
+			endOrderButton.className = "confirm";
 			
-			findVehicleButton.innerText = "FIND STORE";
-			findVehicleButton.style = "margin-right: 8px"
-			endBookingButton.innerText = "END BOOKING";
-			endBookingButton.style = "float: right; background-color: #F44336";
+			findRestaurantButton.innerText = "FIND STORE";
+			findRestaurantButton.style = "margin-right: 8px"
+			endOrderButton.innerText = "END ORDER";
+			endOrderButton.style = "float: right; background-color: #F44336";
 			
-			buttons.push(findVehicleButton);
-			buttons.push(endBookingButton);
+			buttons.push(findRestaurantButton);
+			buttons.push(endOrderButton);
 			
 			return buttons;
 		},
 		
-		currentBooking: function(booking, findCallback, endCallBack) {
+		currentOrders: function(orders, findCallback, endCallBack) {
 			var container = document.createElement("div");
 			
-			var info = this.currentBookingInfo(booking);
-			var buttons = this.currentBookingButtons(booking, findCallback, endCallBack);
+			var info = this.currentOrderInfo(orders);
+			var buttons = this.currentOrderButtons(orders, findCallback, endCallBack);
 			
 			// todo: find button doesn't work without the map, so remove it
 			buttons.shift();
@@ -298,15 +298,15 @@ var view = (function() {
 			return container;
 		},
 		
-		currentBookingCard: function(booking, findCallback, endCallBack) {
+		currentOrderCard: function(order, findCallback, endCallBack) {
 			var container = document.createElement("div");
-			container.id = "current-booking";
+			container.id = "current-order";
 			
 			var header = document.createElement("h3");
-			var info = this.currentBookingInfo(booking);
-			var buttons = this.currentBookingButtons(booking, findCallback, endCallBack);
+			var info = this.currentOrderInfo(order);
+			var buttons = this.currentOrderButtons(order, findCallback, endCallBack);
 			
-			header.innerText = "CURRENT BOOKING";
+			header.innerText = "CURRENT ORDER";
 			
 			container.appendChild(header);
 			container.appendChild(info);

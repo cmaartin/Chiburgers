@@ -99,7 +99,7 @@ rebu = (function() {
 			});
 		},
 		
-		getBookings: function(user, callback) {
+		getOrders: function(user, callback) {
 			console.log("[api] getting bookings for " + user);
 			var request = new Request('/api/orders?id=' + user);
 			fetch(request)
