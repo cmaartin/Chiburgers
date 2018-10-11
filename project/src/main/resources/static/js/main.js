@@ -75,7 +75,7 @@ function hideLoginHint() {
 function showNearbyButton() {
 	if (!nearbyButton) {
 		var button = document.getElementById("geo-button");
-		button.innerHTML = 'NEARBY CARS';
+		button.innerHTML = 'NEARBY STORES';
 		button.removeEventListener('click', geolocateHandler)
 		button.addEventListener('click', nearbyHandler)
 		nearbyButton = true;
