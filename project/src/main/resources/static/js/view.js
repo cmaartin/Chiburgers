@@ -227,14 +227,9 @@ var view = (function() {
 			
 			// create date string
 			date.innerText = this.jsonDateToString(order.timestamp);
-			item.innerText = order.item;
-			
-			item.className = "item";
-			
 			
 			container.appendChild(vehicleInfo);
 			container.appendChild(date);
-			container.appendChild(item);
 			return container;
 		},
 		
