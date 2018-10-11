@@ -341,7 +341,7 @@ button.confirm:disabled {
 	background-color: #ababab;
 }
 
-#prev-bookings > div {
+#prev-orders > div {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -350,21 +350,21 @@ button.confirm:disabled {
 	transition: background-color 0.2s ease;
 }
 
-#prev-bookings > div:nth-child(even) {
+#prev-orders > div:nth-child(even) {
 	background-color: #00000008;
 }
 
-#prev-bookings .vehicle-info {
+#prev-orders .restaurant-info {
 	flex-grow: 1;
 }
 
-#prev-bookings .cost {
+#prev-orders .cost {
 	font-weight: bolder;
 	color: #000000de;
 	margin-left: 32px;
 }
 
-#current-booking {
+#current-order {
 	position: fixed;
 	bottom: 16px;
 	left: 16px;
@@ -376,32 +376,32 @@ button.confirm:disabled {
 	transition: transform 0.2s ease-out;
 }
 
-#current-booking.transition-start {
+#current-order.transition-start {
 	transform: translate(-110%);
 }
 
-#current-booking > h3 {
+#current-order > h3 {
 	color: #00000099;
 	font-size: 16px;
 	margin-bottom: 16px;
 }
 
-#current-booking > div {
+#current-order > div {
 	display: flex;
 	justify-content: space-between;
 }
 
-#current-booking .vehicle-info h3,
-#current-booking .booking-info h3 {
+#current-order .restaurant-info h3,
+#current-order .orders-info h3 {
 	color: #000000de;
 }
 
-#current-booking .vehicle-info p,
-#current-booking .booking-info p {
+#current-order .restaurant-info p,
+#current-order .orders-info p {
 	color: #00000099;
 }
 
-#current-booking .booking-info {
+#current-order .orders-info {
 	text-align: right;
 }
 
@@ -447,7 +447,7 @@ form.searchbox button:focus {
 
 /* account page current booking */
 
-#cur-booking > div {
+#cur-orders > div {
 	border: 1px solid rgba(0, 0, 0, 0.6);
 	border-radius: 4px;
 	padding: 40px;
@@ -455,7 +455,7 @@ form.searchbox button:focus {
 	margin-bottom: 8px;
 }
 
-#cur-booking > div:before {
+#cur-orders > div:before {
 	content: "ACTIVE BOOKING";
 	position: absolute;
 	top: -8px;
@@ -467,18 +467,18 @@ form.searchbox button:focus {
 	color: #00000099;
 }
 
-#cur-booking > div > div {
+#cur-orders > div > div {
 	display: flex;
 	justify-content: space-between;
 }
 
-#cur-booking .booking-info {
+#cur-orders .orders-info {
 	text-align: right;
 }
 
 @media only screen and (max-width: 432px) {
 	
-	#current-booking {
+	#current-order {
 		bottom: 0;
 		left: 0;
 		border-radius: 0;

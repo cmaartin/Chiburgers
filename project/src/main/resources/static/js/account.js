@@ -2,7 +2,8 @@ document.addEventListener("login", function() {
 	//get current booking
 	rebu.getCurrentBooking(function(orders) {
 		var currentDiv = document.getElementById("cur-orders");
-		currentDiv.appendChild(view.currentOrders(orders, findBookedVehicle, endBooking));
+		currentDiv.appendChild(view.currentOrders(orders, findBookedVehicle, endOrder));
+		
 	});
 	// get past bookings
 	var user = googleUser.getBasicProfile().getEmail()

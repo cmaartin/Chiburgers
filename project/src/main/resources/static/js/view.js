@@ -107,7 +107,7 @@ var view = (function() {
 			var container = document.createElement("div");
 			
 			// create vehicle info
-			var vehicleInfo = this.vehicleInfo(vehicle);
+			var vehicleInfo = this.restaurantInfo(vehicle);
 			
 			// create book button
 			var bookButtonContainer = document.createElement("div");
@@ -204,7 +204,7 @@ var view = (function() {
 		infoWindow: function(vehicle, callback) {
 			var infoContents = document.createElement("div");
 			var bookBtn = document.createElement("button");
-			var vehicleInfo = this.vehicleInfo(vehicle);
+			var vehicleInfo = this.restaurantInfo(vehicle);
 			
 			bookBtn.className = "confirm";
 			// disable button if car unavailable
@@ -280,8 +280,8 @@ var view = (function() {
 		
 		currentOrders: function(orders, findCallback, endCallBack) {
 			var container = document.createElement("div");
-			
 			var info = this.currentOrderInfo(orders);
+			
 			var buttons = this.currentOrderButtons(orders, findCallback, endCallBack);
 			
 			// todo: find button doesn't work without the map, so remove it

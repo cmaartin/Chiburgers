@@ -222,7 +222,7 @@ function bookingForm(vehicle) {
 		currentInfoWindow = null;
 	}
 	// create the form
-	var vehicleInfo = view.vehicleInfo(vehicle);
+	var vehicleInfo = view.restaurantInfo(vehicle);
 	var bookingForm = view.bookingForm(vehicle);
 	bookingForm.addEventListener("submit", function(e) {
 		e.preventDefault();
@@ -249,7 +249,7 @@ function submitBooking(vehicle) {
 	    	
 				
 					// show the confirmation screen
-					var vehicleInfo = view.vehicleInfo(vehicle);
+					var vehicleInfo = view.restaurantInfo(vehicle);
 					sidepane.clear();
 					sidepane.appendHeader("YOUR ORDER: ");
 					
@@ -425,7 +425,7 @@ function removeCurrentBooking() {
 		bookedVehicle = null;
 	}
 	// remove the card
-	var currentBookingCard = document.getElementById("current-booking");
+	var currentBookingCard = document.getElementById("current-order");
 	if (currentBookingCard) {
 		// fancy transition
 		currentBookingCard.className = "transition-start";
