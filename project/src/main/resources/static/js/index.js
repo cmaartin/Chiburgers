@@ -1,6 +1,6 @@
 document.addEventListener("login", function() {
     // check if the newly logged in user has a booking
-    displayCurrentBooking()
+	displayCurrentOrder()
 });
 
 // Display the geolocate button initially

@@ -138,6 +138,7 @@ public class ApiController {
 		res.type("application/json");
 		return new Gson().toJson(orders);
 	    } else {
+		res.status(204);
 		return "";
 	    }
 	});
@@ -165,7 +166,7 @@ public class ApiController {
 		res.type("application/json");
 		return new Gson().toJson(or);
 	    } else {
-
+		res.status(204);
 		return "";
 	    }
 	});

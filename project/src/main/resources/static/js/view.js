@@ -226,9 +226,12 @@ var view = (function() {
 			
 			// create date string
 			date.innerText = this.jsonDateToString(order.timestamp);
+			item.innerText = order.item;
+			item.className = "cost";
 			
 			container.appendChild(restaurantInfo);
 			container.appendChild(date);
+			container.appendChild(item);
 			return container;
 		},
 		
