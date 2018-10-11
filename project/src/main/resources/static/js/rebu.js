@@ -1,45 +1,34 @@
 // contains all API requests
 rebu = (function() {
 	
-	// if true, calls will use admin API routes when possible
-	var isAdmin = false;
-	
-	function addVehicleDescription(vehicle) {
-		vehicle.description =  vehicle.storename;
+	function addRestaurantDescription(restaurant) {
+		restaurant.description =  restaurant.storename;
 	}
 	
 	return {
 		
-		setAdmin: function(value) {
-			isAdmin = value;
-		},
-		
-		isAdmin: function() {
-			return isAdmin;
-		},
-		
-		getVehicles: function(callback) {
+		getRestaurants: function(callback) {
 			console.log("Get Restaurants");
-			var vehicles = [];
-			var request = new Request(isAdmin ? '/admin/api/vehicles/all' : '/api/restaurants');
+			var restaurants = [];
+			var request = new Request('/api/restaurants');
 			fetch(request)
 			.then(res => res.json())
 			.then(json => {
 				for (var i = 0; i < json.length; i++) {
-					var vehicle = json[i];
+					var restaurant = json[i];
 					// TODO: temporary fix for model mismatch
-					addVehicleDescription(vehicle)
+					addRestaurantDescription(restaurant)
 					
-					vehicles.push(vehicle);
+					restaurants.push(restaurant);
 				};
-				console.log(vehicles);
-				callback(vehicles);
+				console.log(restaurants);
+				callback(restaurants);
 			});
 		},
 		
 		getNearby: function(pos, callback) {
 			console.log("Get nearby restaurants");
-			var vehicles = [];
+			var restaurants = [];
 			var headers = new Headers();
 			headers.append("Content-Type", "application/json");
 			var request = new Request('/api/restaurants/nearby', {
@@ -52,25 +41,24 @@ rebu = (function() {
 			.then(res => res.json())
 			.then(json => {
 				for (var i = 0; i < json.length; i++) {
-					var vehicle = json[i];
+					var restaurant = json[i];
 					
 					// TODO: temporary fix for model mismatch
-					addVehicleDescription(vehicle)
-					vehicle.available = true;
+					addRestaurantDescription(restaurant)
 					
 					// make the distance prettier
-					vehicle.distance = vehicle.distance.toFixed(2) + " km";
+					restaurant.distance = restaurant.distance.toFixed(2) + " km";
 					
-					vehicles.push(vehicle);
+					restaurants.push(restaurant);
 				}
-				console.log(vehicles);
-				callback(vehicles)
+				console.log(restaurants);
+				callback(restaurants)
 			});
 		},
 		
-		requestBooking: function(orderRequest, callback) {
+		requestOrder: function(orderRequest, callback) {
 			console.log("[api] requesting order", orderRequest);
-			var booking = {
+			var order = {
 			    timestamp: view.dateToString(new Date()),
 			    store_id: orderRequest.store_id,
 			    customerId: orderRequest.client,
@@ -78,15 +66,15 @@ rebu = (function() {
 			    item: orderRequest.item
 			}
 			
-			booking = JSON.stringify(booking);
-			console.log("Order:", booking);
+			order = JSON.stringify(order);
+			console.log("Order:", order);
 						
 			var headers = new Headers();
 			headers.append("Content-Type", "application/json");
 			var request = new Request('/api/orders', {
 				method: 'post',
 				headers: headers,
-				body: booking
+				body: order
 			});
 			
 			fetch(request).then(res => {
@@ -109,7 +97,7 @@ rebu = (function() {
 			});
 		},
 		
-		getCurrentBooking: function(callback) {
+		getCurrentOrder: function(callback) {
 			console.log("[api] getting current order");
 			var request = new Request('/api/orders/now');
 			fetch(request)
@@ -127,7 +115,7 @@ rebu = (function() {
 			});
 		},
 		
-		endCurrentBooking: function(callback) {
+		endCurrentOrder: function(callback) {
 			console.log("[server] end order");
 			
 			var headers = new Headers();

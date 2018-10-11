@@ -2,9 +2,9 @@ var map = null;
 
 // list of vehicles currently being displayed on the map
 // map markers are stored in vehicles[i].marker
-var mapVehicles = [];
+var mapRestaurants = [];
 // currently booked vehicle if applicable, marker is stored as above
-var bookedVehicle = null;
+var bookedRestaurant = null;
 
 var urlAvail = '/img/hamburger.png';
 
@@ -130,24 +130,19 @@ function initMap() {
 	}, console.error, {enableHighAccuracy: true});
 	
 	// fetch & display vehicles
-	rebu.getVehicles(displayVehicles);
-
-	// refresh the map automatically every 60 seconds
-	setInterval(function() {
-		rebu.getVehicles(displayVehicles);
-	}, 60000);
+	rebu.getRestaurants(displayRestaurants);
 }
 
-function displayVehicles(vehicles) {
+function displayRestaurants(restaurants) {
 	// clear old markers
-	for (var i = 0; i < mapVehicles.length; i++) {
-		mapVehicles[i].marker.setMap(null);
+	for (var i = 0; i < mapRestaurants.length; i++) {
+		mapRestaurants[i].marker.setMap(null);
 	}
 	// display new markers
-	for (var i = 0; i < vehicles.length; i++) {
-		vehicles[i].marker = createVehicleMarker(vehicles[i], map);
+	for (var i = 0; i < restaurants.length; i++) {
+		restaurants[i].marker = createRestaurantMarker(restaurants[i], map);
 	};
-	mapVehicles = vehicles;
+	mapRestaurants = restaurants;
 }
 
 function displayLocation(pos) {
@@ -181,9 +176,9 @@ function displayLocation(pos) {
 	}
 }
 
-function createVehicleMarker(vehicle, map, booked = false) {
+function createRestaurantMarker(restaurant, map, booked = false) {
 	var marker = new google.maps.Marker({
-		position: vehicle.location,
+		position: restaurant.location,
 		map: map,
 		icon: {
 			url: urlAvail,
@@ -191,7 +186,7 @@ function createVehicleMarker(vehicle, map, booked = false) {
 			origin: new google.maps.Point(0, 0),
 			anchor: new google.maps.Point(20, 40)
 		},
-		title: vehicle.storename
+		title: restaurant.storename
 	});
 	
 	marker.addListener('click', function() {
@@ -200,9 +195,9 @@ function createVehicleMarker(vehicle, map, booked = false) {
 		if (currentInfoWindow) currentInfoWindow.close();
 		
 		// create info window & open it
-		var content = view.infoWindow(vehicle, function(e) {
+		var content = view.infoWindow(restaurant, function(e) {
 			e.preventDefault();
-			bookingForm(vehicle);
+			orderForm(restaurant);
 		});
 		var info = new google.maps.InfoWindow({content: content});
 		info.open(map, marker);
@@ -214,29 +209,29 @@ function createVehicleMarker(vehicle, map, booked = false) {
 	return marker;
 }
 
-function bookingForm(vehicle) {
-	console.log("Getting booking form for", vehicle)
+function orderForm(restaurant) {
+	console.log("Getting order form for", restaurant)
 	// close the current info window
 	if (currentInfoWindow) {
 		currentInfoWindow.close();
 		currentInfoWindow = null;
 	}
 	// create the form
-	var vehicleInfo = view.restaurantInfo(vehicle);
-	var bookingForm = view.bookingForm(vehicle);
-	bookingForm.addEventListener("submit", function(e) {
+	var restaurantInfo = view.restaurantInfo(restaurant);
+	var orderForm = view.orderForm(restaurant);
+	orderForm.addEventListener("submit", function(e) {
 		e.preventDefault();
-		submitBooking(vehicle);
+		submitOrder(restaurant);
 	});
 	
 	sidepane.clear();
-	sidepane.appendHeader("BOOK YOUR CAR");
-	sidepane.append(vehicleInfo);
-	sidepane.append(bookingForm);
+	sidepane.appendHeader("ORDER YOUR FOOD");
+	sidepane.append(restaurantInfo);
+	sidepane.append(orderForm);
 	sidepane.open();
 }
 
-function submitBooking(vehicle) {	
+function submitOrder(restaurant) {	
 	// collect booking details
 	if (googleUser != null){
 		var form = document.getElementById("booking-form");
@@ -249,14 +244,14 @@ function submitBooking(vehicle) {
 	    	
 				
 					// show the confirmation screen
-					var vehicleInfo = view.restaurantInfo(vehicle);
+					var restaurantInfo = view.restaurantInfo(restaurant);
 					sidepane.clear();
 					sidepane.appendHeader("YOUR ORDER: ");
 					
 					sidepane.append(itemP);
 					
 					sidepane.appendHeader("Location: ");
-					sidepane.append(vehicleInfo);
+					sidepane.append(restaurantInfo);
 					
 					//sidepane.clear();
 					//sidepane.appendHeader("PAYMENT");
@@ -307,7 +302,7 @@ function submitBooking(vehicle) {
 				        				client: googleUser.getBasicProfile().getEmail()
 				        		};
 				        		
-					        	rebu.requestBooking(orderRequest, function(succeeded) {
+					        	rebu.requestOrder(orderRequest, function(succeeded) {
 					        		
 					        		if (succeeded) {
 					        			sidepane.clear();
@@ -315,12 +310,12 @@ function submitBooking(vehicle) {
 								    	sidepane.appendHeader("PAYMENT");
 								    	
 								    	sidepane.append(view.paymentConfirmation(true));
-								    	sidepane.append(view.bookingConfirmed());
+								    	sidepane.append(view.orderConfirmed());
 								    	
-								    	rebu.getVehicles(displayVehicles);
+								    	rebu.getRestaurants(displayRestaurants);
 										// show booking marker & card
 										
-										displayCurrentBooking();
+								    	displayCurrentOrder();
 					        		} else {
 					        			sidepane.clear();
 								    	sidepane.appendHeader("You have already ordered!");
@@ -360,35 +355,35 @@ function nearbyCars(pos) {
 		sidepane.clear();
 		sidepane.appendHeader("NEARBY RESTAURANTS");
 		for (var i = 0; i < nearby.length; i++) {
-			let vehicle = nearby[i];
-			console.log(vehicle);
-			var nearbyVehicle = view.nearbyVehicle(vehicle, function(e) {
+			let restaurant = nearby[i];
+			console.log(restaurant);
+			var nearbyRestaurant = view.nearbyVehicle(restaurant, function(e) {
 				e.preventDefault();
-				bookingForm(vehicle);
+				orderForm(restaurant);
 			});
-			sidepane.append(nearbyVehicle);
+			sidepane.append(nearbyRestaurant);
 		}
 		sidepane.open();
 	});
 }
 
-function findBookedVehicle(booking) {
+function findBookedRestaurant(order) {
 	if (map != null) {
-		map.panTo(bookedVehicle.marker.getPosition());
+		map.panTo(bookedRestaurant.marker.getPosition());
 	}
 	// open a google maps link navigating to the vehicle
-	var pos = bookedVehicle.marker.getPosition();
+	var pos = bookedRestaurant.marker.getPosition();
 	var link = "https://maps.google.com/maps?daddr=" + pos.lat() + "," + pos.lng();
 	var win = window.open(link, '_blank');
 	win.focus();
 }
 
-function endOrder(booking) {
-	rebu.endCurrentBooking(function(success) {
+function endOrder(order) {
+	rebu.endCurrentOrder(function(success) {
 		if (success) {
 			if (map != null) {
-				removeCurrentBooking();
-				rebu.getVehicles(displayVehicles);
+				removeCurrentOrder();
+				rebu.getRestaurants(displayRestaurants);
 			} else {
 				window.location.reload();
 			}
@@ -399,14 +394,14 @@ function endOrder(booking) {
 }
 
 // Queries for the user's current booking & displays it as a card
-function displayCurrentBooking() {
-	rebu.getCurrentBooking(function(order) {
+function displayCurrentOrder() {
+	rebu.getCurrentOrder(function(order) {
 		// create vehicle marker
 		bookedRestaurant = order.restaurant;
 		bookedRestaurant.marker = createVehicleMarker(bookedRestaurant, map, true);
 		
 		// display the card
-		var currentOrderCard = view.currentOrderCard(order, findBookedVehicle, endOrder);
+		var currentOrderCard = view.currentOrderCard(order, findBookedRestaurant, endOrder);
 			
 		// fancy transition
 		currentOrderCard.className = "transition-start";
@@ -418,19 +413,19 @@ function displayCurrentBooking() {
 }
 
 // removes the current booking card & marker
-function removeCurrentBooking() {
+function removeCurrentOrder() {
 	// remove the marker first
-	if (bookedVehicle) {
-		bookedVehicle.marker.setMap(null);
-		bookedVehicle = null;
+	if (bookedRestaurant) {
+		bookedRestaurant.marker.setMap(null);
+		bookedRestaurant = null;
 	}
 	// remove the card
-	var currentBookingCard = document.getElementById("current-order");
-	if (currentBookingCard) {
+	var currentOrderCard = document.getElementById("current-order");
+	if (currentOrderCard) {
 		// fancy transition
-		currentBookingCard.className = "transition-start";
+		currentOrderCard.className = "transition-start";
 		setTimeout(function() {
-			document.body.removeChild(currentBookingCard);
+			document.body.removeChild(currentOrderCard);
 		}, 200);
 	}
 }

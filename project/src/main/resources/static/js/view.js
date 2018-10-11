@@ -131,7 +131,7 @@ var view = (function() {
 			return container;
 		},
 		
-		bookingForm: function(vehicle) {			
+		orderForm: function(restaurant) {			
 			var form = document.createElement("form");
 			var submit = document.createElement("button");
 			
@@ -144,7 +144,7 @@ var view = (function() {
 			
 			store_id.id = "store_id";
 			store_id.type = "hidden";
-			store_id.value = vehicle.storeid;
+			store_id.value = restaurant.storeid;
 			
 			dropoffLegend.innerText = "Menu";
 			dropoffTime.id = "dropoff-time";
@@ -187,7 +187,7 @@ var view = (function() {
 			return form;
 		},
 		
-		bookingConfirmed: function() {
+		orderConfirmed: function() {
 			var container = document.createElement("div");
 			var header = document.createElement("h3");
 			var message = document.createElement("p");
@@ -201,19 +201,18 @@ var view = (function() {
 			return container;
 		},
 		
-		infoWindow: function(vehicle, callback) {
+		infoWindow: function(restaurant, callback) {
 			var infoContents = document.createElement("div");
 			var bookBtn = document.createElement("button");
-			var vehicleInfo = this.restaurantInfo(vehicle);
+			var restaurantInfo = this.restaurantInfo(restaurant);
 			
 			bookBtn.className = "confirm";
-			// disable button if car unavailable
 			
-			bookBtn.innerText = "BOOK NOW";
+			bookBtn.innerText = "ORDER NOW";
 			bookBtn.addEventListener("click", callback);
 			
 			infoContents.className = "map-info";
-			infoContents.appendChild(vehicleInfo);
+			infoContents.appendChild(restaurantInfo);
 			infoContents.appendChild(bookBtn);
 			
 			return infoContents;
@@ -221,14 +220,14 @@ var view = (function() {
 		
 		previousOrder: function(order) {
 			var container = document.createElement("div");
-			var vehicleInfo = this.restaurantInfo(order.restaurant);
+			var restaurantInfo = this.restaurantInfo(order.restaurant);
 			var date = document.createElement("p");
 			var item = document.createElement("p");
 			
 			// create date string
 			date.innerText = this.jsonDateToString(order.timestamp);
 			
-			container.appendChild(vehicleInfo);
+			container.appendChild(restaurantInfo);
 			container.appendChild(date);
 			return container;
 		},
