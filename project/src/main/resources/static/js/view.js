@@ -95,7 +95,7 @@ var view = (function() {
 						
 			container.className = "booking-info";
 			remaining.innerText = "" + remainingTime + " Remaining";
-			end.innerText = "Booked until " + endTime;
+			end.innerText = "Ready in " + endTime ;
 			
 			container.appendChild(remaining);
 			container.appendChild(end);
@@ -116,7 +116,7 @@ var view = (function() {
 			
 			container.className = "nearby-info";
 			bookButtonContainer.className = "book-container";
-			bookButton.innerText = "BOOK";
+			bookButton.innerText = "ORDER";
 			distance.innerText = vehicle.distance;
 			
 			bookButtonContainer.appendChild(distance);
@@ -209,7 +209,7 @@ var view = (function() {
 			bookBtn.className = "confirm";
 			// disable button if car unavailable
 			
-			bookBtn.innerText = "BOOK NOW";
+			bookBtn.innerText = "ORDER";
 			bookBtn.addEventListener("click", callback);
 			
 			infoContents.className = "map-info";
@@ -269,7 +269,7 @@ var view = (function() {
 			
 			findVehicleButton.innerText = "FIND STORE";
 			findVehicleButton.style = "margin-right: 8px"
-			endBookingButton.innerText = "END BOOKING";
+			endBookingButton.innerText = "END ORDER";
 			endBookingButton.style = "float: right; background-color: #F44336";
 			
 			buttons.push(findVehicleButton);
@@ -306,7 +306,7 @@ var view = (function() {
 			var info = this.currentBookingInfo(booking);
 			var buttons = this.currentBookingButtons(booking, findCallback, endCallBack);
 			
-			header.innerText = "CURRENT BOOKING";
+			header.innerText = "CURRENT ORDER";
 			
 			container.appendChild(header);
 			container.appendChild(info);

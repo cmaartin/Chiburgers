@@ -281,7 +281,7 @@ var adminView = (function() {
 			if (bookings.length == 0) {
 				var p = document.createElement("p");
 				p.className = "hint";
-				p.innerText = "No bookings found for this user";
+				p.innerText = "No orders found for this user";
 				return p;
 			} else {
 				var bookingBtns = new Array(bookings.length);
@@ -442,7 +442,7 @@ function manageUser() {
 				sidepane.append(adminView.bookingList(bookings, displayRoute));
 				var hint = document.createElement("p");
 				hint.className = "hint";
-				hint.innerText = "Tip: Click on a booking to view it's route";
+				hint.innerText = "Tip: Click on a order to view it's route";
 				sidepane.append(hint);
 			});
 		});

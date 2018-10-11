@@ -75,7 +75,7 @@ function hideLoginHint() {
 function showNearbyButton() {
 	if (!nearbyButton) {
 		var button = document.getElementById("geo-button");
-		button.innerHTML = 'NEARBY CARS';
+		button.innerHTML = 'RESTAURANTS NEARBY';
 		button.removeEventListener('click', geolocateHandler)
 		button.addEventListener('click', nearbyHandler)
 		nearbyButton = true;
@@ -230,7 +230,7 @@ function bookingForm(vehicle) {
 	});
 	
 	sidepane.clear();
-	sidepane.appendHeader("BOOK YOUR CAR");
+	sidepane.appendHeader("ORDER YOUR MEAL");
 	sidepane.append(vehicleInfo);
 	sidepane.append(bookingForm);
 	sidepane.open();
@@ -364,6 +364,7 @@ function nearbyCars(pos) {
 			console.log(vehicle);
 			var nearbyVehicle = view.nearbyVehicle(vehicle, function(e) {
 				e.preventDefault();
+				map.panTo(new google.maps.LatLng(vehicle.location.lat, vehicle.location.lng));
 				bookingForm(vehicle);
 			});
 			sidepane.append(nearbyVehicle);
