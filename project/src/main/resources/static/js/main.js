@@ -306,7 +306,6 @@ function submitOrder(restaurant) {
 					        		
 					        		if (succeeded) {
 					        			sidepane.clear();
-					        			
 								    	sidepane.appendHeader("PAYMENT");
 								    	
 								    	sidepane.append(view.paymentConfirmation(true));
@@ -398,7 +397,7 @@ function displayCurrentOrder() {
 	rebu.getCurrentOrder(function(order) {
 		// create vehicle marker
 		bookedRestaurant = order.restaurant;
-		bookedRestaurant.marker = createVehicleMarker(bookedRestaurant, map, true);
+		bookedRestaurant.marker = createRestaurantMarker(bookedRestaurant, map, true);
 		
 		// display the card
 		var currentOrderCard = view.currentOrderCard(order, findBookedRestaurant, endOrder);

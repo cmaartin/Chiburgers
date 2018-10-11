@@ -80,7 +80,7 @@ rebu = (function() {
 			fetch(request).then(res => {
 				if (res.status == 200) {
 					res.json()
-					.then(callback(booking));
+					.then(callback(order));
 				} else {
 					callback(null);
 				}
@@ -104,10 +104,10 @@ rebu = (function() {
 			.then(res => {
 				if (res.status == 200) {
 					res.json()
-					.then(booking => {
-						addVehicleDescription(booking.restaurant);
-						console.log(booking);
-						callback(booking);
+					.then(order => {
+						addRestaurantDescription(order.restaurant);
+						console.log(order);
+						callback(order);
 					})
 				} else {
 					console.log("No current booking");
