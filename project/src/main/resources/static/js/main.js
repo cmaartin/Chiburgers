@@ -190,7 +190,6 @@ function createRestaurantMarker(restaurant, map, booked = false) {
 	});
 	
 	marker.addListener('click', function() {
-		console.log("Clicked on marker for", vehicle)
 		// close the currently opened window
 		if (currentInfoWindow) currentInfoWindow.close();
 		
@@ -199,6 +198,7 @@ function createRestaurantMarker(restaurant, map, booked = false) {
 			e.preventDefault();
 			orderForm(restaurant);
 		});
+		
 		var info = new google.maps.InfoWindow({content: content});
 		info.open(map, marker);
 		
@@ -255,7 +255,7 @@ function submitOrder(restaurant) {
 					
 					//sidepane.clear();
 					//sidepane.appendHeader("PAYMENT");
-					sidepane.append(view.payment(null));
+					sidepane.append(view.payment());
 					// render paypal button
 					// refresh the map
 					paypal.Button.render({

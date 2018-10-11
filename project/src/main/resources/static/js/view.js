@@ -313,7 +313,7 @@ var view = (function() {
 			return container;
 		},
 		
-		payment: function(booking) {
+		payment: function() {
 			var container = document.createElement("div");
 			
 			var description = document.createElement("p");
