@@ -31,9 +31,9 @@ public class Database implements Closeable {
 	try {
 	    if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
 		String instance = Config.get("cloudSqlInstance");
-		String database = Config.get("cloudSqlDatabase");
-		String username = Config.get("cloudSqlUsername");
-		String password = Config.get("cloudSqlPassword");
+		String db = Config.get("deployInstance");
+		String root = Config.get("deployRootUser");
+		String rootpass = Config.get("deployRootPass");
 
 		String url = "jdbc:mysql://google/" + database + "?useSSL=false&cloudSqlInstance=" + instance
 			+ "&socketFactory=com.google.cloud.sql.mysql.SocketFactory" + "&user=" + username + "&password="
@@ -44,9 +44,9 @@ public class Database implements Closeable {
 	    } else {
 		// this fixes an issue with AppEngine Dev Server hot reloads
 		Class.forName("com.mysql.jdbc.Driver");
-		String database = Config.get("localSqlDatabase");
-		String username = Config.get("localSqlUsername");
-		String password = Config.get("localSqlPassword");
+		String db = Config.get("localDatabase");
+		String root = Config.get("localRootUser");
+		String rootpass = Config.get("localRootPass");
 		String url = "jdbc:mysql://localhost:3306/" + database + "?useSSL=false"
 			+ "&serverTimezone=Australia/Melbourne";
 		logger.info("Connecting to development database: " + url);
